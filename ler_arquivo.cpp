@@ -43,7 +43,7 @@ std::string conversorHexBin(std::string hex) {
 
 void decodificaTipo(std::string instrucaoBin) {
     
-    std::string opcode = instrucaoBin.substr(24, 7);
+    std::string opcode = instrucaoBin.substr(25, 7);
 
     if (opcode == "0110011") {
         decodificaTipoR(instrucaoBin);
@@ -64,49 +64,64 @@ void decodificaTipo(std::string instrucaoBin) {
         decodificaTipoJ(instrucaoBin);
     }
     else {
-        std::cout << "Operação invalida";
+        std::cout << "Operacao invalida: Opcode = " << opcode << "\n";
     }
 
 }
 
 void decodificaTipoR(std::string instrucaoBin) {
-    std::string funct7 = instrucaoBin.substr(0, 7);   
-    std::string rs2    = instrucaoBin.substr(7, 5);  
-    std::string rs1    = instrucaoBin.substr(12, 5);  
-    std::string funct3 = instrucaoBin.substr(17, 3);  
-    std::string rd     = instrucaoBin.substr(20, 5);  
-    std::string opcode = instrucaoBin.substr(25, 7);  
+    
+    std::string funct7    = instrucaoBin.substr(0, 7);
+    std::string rs2       = instrucaoBin.substr(7, 5);
+    std::string rs1       = instrucaoBin.substr(12, 5);
+    std::string funct3    = instrucaoBin.substr(17, 3);
+    std::string rd        = instrucaoBin.substr(20, 5);
+    std::string opcode    = instrucaoBin.substr(25, 7);
 }
 
 void decodificaTipoI(std::string instrucaoBin) {
-    std::string imm    = instrucaoBin.substr(0, 12); 
-    std::string rs1    = instrucaoBin.substr(12, 5);  
-    std::string funct3 = instrucaoBin.substr(17, 3);  
-    std::string rd     = instrucaoBin.substr(20, 5);  
-    std::string opcode = instrucaoBin.substr(25, 7);  
+    std::string imm11_0   = instrucaoBin.substr(0, 12);
+    std::string rs1       = instrucaoBin.substr(12, 5);
+    std::string funct3    = instrucaoBin.substr(17, 3);
+    std::string rd        = instrucaoBin.substr(20, 5);
+    std::string opcode    = instrucaoBin.substr(25, 7);
 }
 
 void decodificaTipoS(std::string instrucaoBin) {
-    std::string imm1   = instrucaoBin.substr(0, 7);  
-    std::string rs2    = instrucaoBin.substr(7, 5);   
-    std::string rs1    = instrucaoBin.substr(12, 5);  
-    std::string funct3 = instrucaoBin.substr(17, 3);  
-    std::string imm2   = instrucaoBin.substr(20, 5);  
-    std::string opcode = instrucaoBin.substr(25, 7);  
+    std::string imm11_5   = instrucaoBin.substr(0, 7);
+    std::string rs2       = instrucaoBin.substr(7, 5);
+    std::string rs1       = instrucaoBin.substr(12, 5);
+    std::string funct3    = instrucaoBin.substr(17, 3);
+    std::string imm4_0    = instrucaoBin.substr(20, 5);
+    std::string opcode    = instrucaoBin.substr(25, 7);
 }
 
 void decodificaTipoB(std::string instrucaoBin) {
     
-    std::string imm4   = instrucaoBin.substr(0, 1);
-    std::string imm3   = instrucaoBin.substr(1, 5);
-    std::string rs2    = instrucaoBin.substr(7, 4);
-    std::string rs1    = instrucaoBin.substr(12, 4);
-    std::string func3  = instrucaoBin.substr(17, 3);
-    std::string imm2   = instrucaoBin.substr(20, 3);
-    std::string imm1   = instrucaoBin.substr(24, 1);
-    std::string opcode = instrucaoBin.substr(25, 7);
+    std::string imm12     = instrucaoBin.substr(0, 1);
+    std::string imm10_5   = instrucaoBin.substr(1, 5);
+    std::string rs2       = instrucaoBin.substr(7, 4);
+    std::string rs1       = instrucaoBin.substr(12, 4);
+    std::string funct3    = instrucaoBin.substr(17, 3);
+    std::string imm4_1    = instrucaoBin.substr(20, 3);
+    std::string imm11     = instrucaoBin.substr(24, 1);
+    std::string opcode    = instrucaoBin.substr(25, 7);
 
 }
 
-void decodificaTipoU(std::string instrucaoBin);
-void decodificaTipoJ(std::string instrucaoBin);
+void decodificaTipoU(std::string instrucaoBin) {
+
+    std::string imm       = instrucaoBin.substr(0, 20);
+    std::string rd        = instrucaoBin.substr(20, 5);
+    std::string opcode    = instrucaoBin.substr(25, 7);
+}
+
+void decodificaTipoJ(std::string instrucaoBin) {
+    
+    std::string imm20     = instrucaoBin.substr(0, 1);
+    std::string imm10_1   = instrucaoBin.substr(1, 10);
+    std::string imm11     = instrucaoBin.substr(11, 1);
+    std::string imm19_12  = instrucaoBin.substr(12, 8);
+    std::string rd        = instrucaoBin.substr(20, 5);
+    std::string opcode    = instrucaoBin.substr(25, 7);
+}
