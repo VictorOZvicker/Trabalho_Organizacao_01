@@ -1,15 +1,30 @@
 #include <iostream>
 #include <fstream>
+#include <format>
 #include "ler_arquivo.h"
 
-std::vector<std::string> linhasLidas(std::string path) {
+std::vector<std::vector<std::string>> linhasLidas(std::string path) {
     std::ifstream arquivo(path);
-    
+
     std::string linha;
-    std::vector<std::string> linhas;
+    std::vector<std::vector<std::string>> linhas;
+
+    int pc = 0;
     while (std::getline(arquivo, linha))
-    {
-        linhas.push_back(linha);
+    {   
+        
+        //falta verificar se instrução é valida e ignorar comentarios e linhas em branco
+
+        if (linha.find("0x") != std::string::npos) { 
+            linha.erase(0, 2);
+            linhas.push_back({std::format("{:#x}", pc), std::format("{:032b}", std::stoul(linha, nullptr, 16))});            
+        }
+        else {
+            linhas.push_back({std::format("{:#x}", pc), linha});
+        }
+
+        pc += 4;
+        
     }
 
     arquivo.close();
@@ -18,9 +33,6 @@ std::vector<std::string> linhasLidas(std::string path) {
 }
 
 std::string conversorHexBin(std::string hex) {
-    if (hex.find("0x") == -1) { return ""; }
-    
-    std::string hexCru = hex.erase(0, 1);
     std::string bin = "";
 
     for (char c : hex) {
@@ -40,6 +52,8 @@ std::string conversorHexBin(std::string hex) {
 
     return bin;
 }
+
+
 
 void decodificaTipo(std::string instrucaoBin) {
     

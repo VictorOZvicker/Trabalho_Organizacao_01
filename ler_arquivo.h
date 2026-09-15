@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-std::vector<std::string> linhasLidas(std::string path);
+std::vector<std::vector<std::string>> linhasLidas(std::string path);
 
 std::string conversorHexBin(std::string hex);
 
