@@ -15,7 +15,6 @@ int main()
     for (string s : linhas){
         string instBin = conversorHexBin(s);
         cout << instBin << "\n";
-        decodificaTipo(instBin);
     }
 
     return 0;
