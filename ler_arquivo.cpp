@@ -1,26 +1,54 @@
 #include <iostream>
 #include <fstream>
+#include <format>
 #include "ler_arquivo.h"
 
-std::vector<std::string> linhasLidas(std::string path) {
+std::vector<std::vector<std::string>> linhasLidas(std::string path) {
     std::ifstream arquivo(path);
-    
+
     std::string linha;
-    std::vector<std::string> linhas;
+    std::vector<std::vector<std::string>> instrucoes;
+
+    int pc = 0;
     while (std::getline(arquivo, linha))
-    {
-        linhas.push_back(linha);
+    {   
+        int i = 0;
+        while (i < linha.size()) 
+        {
+            if (linha[i] == ' ') {
+                linha = linha.erase(i, 1);
+            }
+            else if (linha[i] == '#') {
+                linha = linha.substr(0, i);
+                break;
+            }
+            else {
+                i++;
+            }
+
+        }
+
+        if (!linha.empty()) { 
+            instrucoes.push_back({std::format("{:#x}", pc), conversorHexBin(linha)});
+            pc += 4;
+        }
+        
     }
 
     arquivo.close();
 
-    return linhas;
+    return instrucoes;
 }
 
 std::string conversorHexBin(std::string hex) {
-    if (hex.find("0x") == -1) { return ""; }
     
-    std::string hexCru = hex.erase(0, 1);
+    if (hex.find("0x") != -1 || hex.find("0X") != -1) {
+        hex.erase(0, 2);
+    }
+    else {
+        return hex;
+    }
+
     std::string bin = "";
 
     for (char c : hex) {
