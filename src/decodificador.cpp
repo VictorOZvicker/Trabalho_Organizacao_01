@@ -5,31 +5,33 @@ int conversorBinInt(std::string bin) {
     return std::stoi(bin, nullptr, 2);
 }
 
-std::vector<std::string> decodificaTipo(std::string instrucaoBin, std::string opdcode) {
+std::vector<std::string> decodificaTipo(std::string instrucaoBin) {
     
     std::string opcode = instrucaoBin.substr(25, 7);
 
     if (opcode == "0110011") {
-        decodificaTipoR(instrucaoBin,opcode);
+        return decodificaTipoR(instrucaoBin,opcode);
     }
     else if (opcode == "0010011" || opcode == "0000011" || opcode == "1100111" || opcode == "1110011") {
-        decodificaTipoI(instrucaoBin,opcode);
+        return decodificaTipoI(instrucaoBin,opcode);
     }
     else if (opcode == "0100011") {
-        decodificaTipoS(instrucaoBin,opcode);
+        return decodificaTipoS(instrucaoBin,opcode);
     }
     else if (opcode == "1100011") {
-        decodificaTipoB(instrucaoBin,opcode);
+        return decodificaTipoB(instrucaoBin,opcode);
     }
     else if (opcode == "0110111" || opcode == "0010111") {
-        decodificaTipoU(instrucaoBin,opcode);
+        return decodificaTipoU(instrucaoBin,opcode);
     }
     else if (opcode == "1101111") {
-        decodificaTipoJ(instrucaoBin,opcode);
+        return decodificaTipoJ(instrucaoBin);
     }
     else {
         std::cout << "Operacao invalida: Opcode = " << opcode << "\n";
     }
+
+    return {};
 }
 
 std::string achaMnemonico(std::string funct7, std::string opcode, std::string funct3) {
@@ -67,7 +69,7 @@ std::vector<std::string> criaSaida(std::string instrucaoBin, std::string tipo, s
     std::string rs1_out  = achaRegister(rs1);
     std::string rs2_out  = achaRegister(rs2);
 
-    std::string assembly = std::format("{} {}, {}, {}", mnemonico, rd, rs1, rs2);
+    std::string assembly = std::format("{} {}, {}, {}", mnemonico, rd_out, rs1_out, rs2_out);
 
     if(mnemonico == "add" && rd_out == "zero") assembly = "nop";
 
@@ -81,7 +83,7 @@ std::vector<std::string> criaSaida(std::string instrucaoBin, std::string tipo, s
         imm,
         funct3,
         funct7,
-        assembly
+        "\nAssembly: " + assembly
     };
 
     return saida;
@@ -94,7 +96,7 @@ std::vector<std::string> criaSaidaI(std::string instrucaoBin, std::string tipo, 
     std::string rd_out  = achaRegister(rd);
     std::string rs1_out = achaRegister(rs1);
 
-    std::string assembly = std::format("{} {}, {}, {}", mnemonico, rd, rs1, conversorBinInt(imm));
+    std::string assembly = std::format("{} {}, {}, {}", mnemonico, rd_out, rs1_out, conversorBinInt(imm));
 
     if(mnemonico == "addi" && rd_out == "zero") assembly = "nop";
     if(mnemonico == "jalr" && rd_out == "zero") assembly = "ret";
@@ -109,7 +111,7 @@ std::vector<std::string> criaSaidaI(std::string instrucaoBin, std::string tipo, 
         imm,
         funct3,
         "(sem funct7)",
-        assembly
+        "\nAssembly: " + assembly
     };
 
     return saida;
@@ -132,7 +134,7 @@ std::vector<std::string> criaSaida(std::string instrucaoBin, std::string tipo, s
         imm,
         funct3,
         "(sem funct7)",
-        std::format("{} {}, {}, {}", mnemonico, rs1, rs2, construtorImm({imm}))
+        std::format("\nAssembly: {} {}, {}, {}", mnemonico, rs1_out, rs2_out, construtorImm({imm}))
     };
 
     return saida;
@@ -154,7 +156,7 @@ std::vector<std::string> criaSaida(std::string instrucaoBin, std::string tipo, s
         imm,
         "(sem funct3)",
         "(sem funct7)",
-        std::format("{} {}, {}", mnemonico, rd, conversorBinInt(imm))
+        std::format("\nAssembly: {} {}, {}", mnemonico, rd_out, conversorBinInt(imm))
     };
 
     return saida;
@@ -237,7 +239,7 @@ std::vector<std::string> decodificaTipoU(std::string instrucaoBin, std::string o
     return saida;
 }
 
-std::vector<std::string> decodificaTipoJ(std::string instrucaoBin, std::string opcode) {
+std::vector<std::string> decodificaTipoJ(std::string instrucaoBin) {
     
     std::string imm20              = instrucaoBin.substr(0, 1);
     std::string imm10_1            = instrucaoBin.substr(1, 10);

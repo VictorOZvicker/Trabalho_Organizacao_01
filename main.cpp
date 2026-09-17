@@ -1,7 +1,15 @@
 #include <iostream>
 #include "ler_arquivo.h"
+#include "decodificador.h"
 
 using namespace std;
+
+void printaInfos(vector<string> infos) {
+    for(int i=1; i <= 9; i++) {
+        cout << infos[i] << " ";
+    }
+    cout << "\n";
+}
 
 
 int main()
@@ -9,21 +17,17 @@ int main()
 
     vector<vector<string>> matrizLinhas = linhasLidas("arquivo.txt");
 
-    //vector<string> linhas = linhasLidas("arquivo.txt");
-    
-    for (int i = 0; i < matrizLinhas.size(); i++) {
-        cout << "PC = ";
-        for (int j = 0; j < matrizLinhas[i].size(); j++) {
-            cout << matrizLinhas[i][j] << "  ";
-        }
+    for (int i = 0; i <  3; i++) {
         cout << endl;
+        
+        printaInfos(decodificaTipo(matrizLinhas[i][1]));
+        
+        cout << "PC = ";
+
+        cout << matrizLinhas[i][0] << " ";
+
+        cout << matrizLinhas[i][1] << endl;
     }
-    /* 
-    for (string s : linhas){
-        string instBin = conversorHexBin(s);
-        cout << instBin << "\n";
-        decodificaTipo(instBin);
-    } */
 
     return 0;
 }

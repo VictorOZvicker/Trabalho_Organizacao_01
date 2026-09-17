@@ -13,7 +13,7 @@ std::vector<std::vector<std::string>> linhasLidas(std::string path) {
     while (std::getline(arquivo, linha))
     {   
         int i = 0;
-        while (i < linha.size()) 
+        while (i < linha.size())
         {
             if (linha[i] == ' ') {
                 linha = linha.erase(i, 1);
