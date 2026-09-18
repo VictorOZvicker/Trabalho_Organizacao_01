@@ -29,7 +29,7 @@ std::vector<std::vector<std::string>> linhasLidas(std::string path) {
         }
 
         if (!linha.empty()) { 
-            instrucoes.push_back({std::format("{:#x}", pc), conversorHexBin(linha)});
+            instrucoes.push_back({std::format("{:#x}", pc), formatadorBinario(linha)});
             pc += 4;
         }
         
@@ -40,14 +40,22 @@ std::vector<std::vector<std::string>> linhasLidas(std::string path) {
     return instrucoes;
 }
 
-std::string conversorHexBin(std::string hex) {
-    
-    if (hex.find("0x") != -1 || hex.find("0X") != -1) {
-        hex.erase(0, 2);
+std::string formatadorBinario(std::string str) {
+    if (str.find("0x") != -1 || str.find("0X") != -1) {
+        return conversorHexBin(str.erase(0, 2));
+    }
+    else if (str.find("0b") != -1 || str.find("0B") != -1) {
+        return str.erase(0, 2);
+    }
+    else if (str.size() >= 32) {
+        return str;
     }
     else {
-        return hex;
+        return str;
     }
+}
+
+std::string conversorHexBin(std::string hex) {
 
     std::string bin = "";
 

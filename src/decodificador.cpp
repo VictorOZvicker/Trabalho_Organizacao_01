@@ -96,19 +96,22 @@ std::vector<std::string> criaSaidaI(std::string instrucaoBin, std::string tipo, 
     std::string rd_out  = achaRegister(rd);
     std::string rs1_out = achaRegister(rs1);
 
-    std::string assembly = std::format("{} {}, {}, {}", mnemonico, rd_out, rs1_out, conversorBinInt(imm));
+    int immConvertido = conversorBinInt(imm);
+
+    std::string assembly = std::format("{} {}, {}, {}", mnemonico, rd_out, rs1_out, immConvertido);
 
     if(mnemonico == "addi" && rd_out == "zero") assembly = "nop";
     if(mnemonico == "jalr" && rd_out == "zero") assembly = "ret";
+    if(instrucaoBin == "00000000000000000000000001110011") assembly = "ecall";
 
     std::vector<std::string> saida = {
         instrucaoBin,
         tipo,
-        mnemonico,
+        (assembly == "ecall") ? assembly : mnemonico,
         rd_out,
         rs1_out,
         "(sem rs2)",
-        imm,
+        std::to_string(immConvertido),
         funct3,
         "(sem funct7)",
         "\nAssembly: " + assembly
