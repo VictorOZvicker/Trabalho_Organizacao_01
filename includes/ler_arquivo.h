@@ -7,6 +7,6 @@
 std::vector<std::vector<std::string>> linhasLidas(std::string path);
 
 std::string conversorHexBin(std::string hex);
-std::string formatadorBinario(std::string str);
+std::string formatadorInst(std::string str);
 
 #endif

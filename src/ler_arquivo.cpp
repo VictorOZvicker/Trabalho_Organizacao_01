@@ -25,14 +25,13 @@ std::vector<std::vector<std::string>> linhasLidas(std::string path) {
             else {
                 i++;
             }
-
         }
+        linha = formatadorInst(linha);
 
         if (!linha.empty()) { 
-            instrucoes.push_back({std::format("{:#x}", pc), formatadorBinario(linha)});
+            instrucoes.push_back({std::format("{:#x}", pc), linha});
             pc += 4;
-        }
-        
+        }    
     }
 
     arquivo.close();
@@ -40,18 +39,38 @@ std::vector<std::vector<std::string>> linhasLidas(std::string path) {
     return instrucoes;
 }
 
-std::string formatadorBinario(std::string str) {
-    if (str.find("0x") != -1 || str.find("0X") != -1) {
-        return conversorHexBin(str.erase(0, 2));
+std::string confereBin(std::string bin) {
+    if (bin.size() == 34) { 
+        bin.erase(0, 2);
     }
-    else if (str.find("0b") != -1 || str.find("0B") != -1) {
-        return str.erase(0, 2);
+
+    if (bin.find_first_not_of("01") != std::string::npos)
+        return "";
+    else
+        return bin;
+}
+
+std::string confereHexa(std::string hex) {
+    if (hex.size() == 10) {
+        hex.erase(0, 2);
     }
-    else if (str.size() >= 32) {
-        return str;
+
+    std::string validos = "0123456789abcdefABCDEF";
+    if (hex.find_first_not_of(validos) != std::string::npos)
+        return "";
+    else 
+        return conversorHexBin(hex);    
+}
+
+std::string formatadorInst(std::string str) {
+    if (str.size() == 8 || str.size() == 10) {
+        return confereHexa(str);
+    }
+    else if (str.size() == 32 || str.size() == 34) {
+        return confereBin(str);
     }
     else {
-        return str;
+        return "";
     }
 }
 
