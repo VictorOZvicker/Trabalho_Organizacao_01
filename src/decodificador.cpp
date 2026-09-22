@@ -4,7 +4,7 @@
 int conversorBinInt(std::string bin) {
     return std::stoi(bin, nullptr, 2);
 }
-
+ 
 std::vector<std::string> decodificaTipo(std::string instrucaoBin) {
     
     std::string opcode = instrucaoBin.substr(25, 7);
@@ -127,6 +127,8 @@ std::vector<std::string> criaSaida(std::string instrucaoBin, std::string tipo, s
     std::string rs1_out  = achaRegister(rs1);
     std::string rs2_out  = achaRegister(rs2);
 
+    int imm_out          = conversorBinInt(imm);
+
     std::vector<std::string> saida = {
         instrucaoBin,
         tipo,
@@ -137,7 +139,7 @@ std::vector<std::string> criaSaida(std::string instrucaoBin, std::string tipo, s
         imm,
         funct3,
         "(sem funct7)",
-        std::format("\nAssembly: {} {}, {}, {}", mnemonico, rs1_out, rs2_out, construtorImm({imm}))
+        std::format("\nAssembly: {} {}, {}, {}", mnemonico, rs1_out, rs2_out, imm_out)
     };
 
     return saida;

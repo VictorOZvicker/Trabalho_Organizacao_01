@@ -16,7 +16,7 @@ void printaInfos(vector<string> infos) {
 int main()
 {   
     float* contagem = (float*)calloc(6, sizeof(float));
-    vector<vector<string>> matrizLinhas = linhasLidas("arquivo.txt");
+    vector<vector<string>> matrizLinhas = linhasLidas("arquivo_02.txt");
 
     for (int i = 0; i <  matrizLinhas.size(); i++) {
         cout << endl;
