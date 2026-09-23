@@ -16,7 +16,8 @@ void printaInfos(vector<string> infos) {
 int main()
 {   
     float* contagem = (float*)calloc(6, sizeof(float));
-    vector<vector<string>> matrizLinhas = linhasLidas("arquivo_02.txt");
+    float cpi[6] = { 4.0, 3.0, 1.0, 5.0, 2.0, 3.0 };
+    vector<vector<string>> matrizLinhas = linhasLidas("arquivo.txt");
 
     for (int i = 0; i <  matrizLinhas.size(); i++) {
         cout << endl;
@@ -30,18 +31,11 @@ int main()
 
         cout << matrizLinhas[i][1] << endl;
 
-        geradorEstatistica(instInfos[1], contagem);
+        contarTipoInst(instInfos[1], contagem);
     }
 
     int totalInstrucoes = matrizLinhas.size();
 
-    cout << "Numero Tipo R: " << contagem[0] << " Numero em % total: " << ((contagem[0]/totalInstrucoes)*100) << endl;
-    cout << "Numero Tipo I: " << contagem[1] << " Numero em % total: " << ((contagem[1]/totalInstrucoes)*100) << endl;
-    cout << "Numero Tipo S: " << contagem[2] << " Numero em % total: " << ((contagem[2]/totalInstrucoes)*100) << endl;
-    cout << "Numero Tipo B: " << contagem[3] << " Numero em % total: " << ((contagem[3]/totalInstrucoes)*100) << endl;
-    cout << "Numero Tipo U: " << contagem[4] << " Numero em % total: " << ((contagem[4]/totalInstrucoes)*100) << endl;
-    cout << "Numero Tipo J: " << contagem[5] << " Numero em % total: " << ((contagem[5]/totalInstrucoes)*100) << endl;
-    
-
+    geradorEstatistica(contagem, cpi, totalInstrucoes);
     return 0;
 }

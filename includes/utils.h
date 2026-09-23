@@ -4,7 +4,7 @@
 #include "string"
 #include <vector>
 
-void geradorEstatistica(std::string instTipo, float *contagem);
-
+void contarTipoInst(std::string instTipo, float *contagem);
+void geradorEstatistica(float *contagem, float *cpi, int totalInstrucoes);
 
 #endif
