@@ -218,8 +218,8 @@ std::vector<std::string> decodificaTipoB(std::string instrucaoBin, std::string o
     
     std::string imm12              = instrucaoBin.substr(0, 1);
     std::string imm10_5            = instrucaoBin.substr(1, 5);
-    std::string rs2                = instrucaoBin.substr(7, 4);
-    std::string rs1                = instrucaoBin.substr(12, 4);
+    std::string rs2                = instrucaoBin.substr(7, 5);
+    std::string rs1                = instrucaoBin.substr(12, 5);
     std::string funct3             = instrucaoBin.substr(17, 3);
     std::string imm4_1             = instrucaoBin.substr(20, 4);
     std::string imm11              = instrucaoBin.substr(24, 1);
