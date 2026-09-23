@@ -1,10 +1,7 @@
 #include "decodificador.h"
+#include "utils.h"
 #include <format>
 
-int conversorBinInt(std::string bin) {
-    return std::stoi(bin, nullptr, 2);
-}
- 
 std::vector<std::string> decodificaTipo(std::string instrucaoBin) {
     
     std::string opcode = instrucaoBin.substr(25, 7);
@@ -45,8 +42,8 @@ std::string achaMnemonico(std::string funct7, std::string opcode, std::string fu
 }
 
 std::string achaRegister(std::string regBin) {
-    auto it = registers.find(conversorBinInt(regBin));
-    if (it != registers.end()) 
+    auto it = registers.find(conversorBinUnsignedInt(regBin));
+    if (it != registers.end())
         return it->second;
      else 
         return "<ERRO>";
@@ -73,6 +70,8 @@ std::vector<std::string> criaSaida(std::string instrucaoBin, std::string tipo, s
 
     if(mnemonico == "add" && rd_out == "zero") assembly = "nop";
 
+    int imm_out = conversorBinSignedInt(imm);
+
     std::vector<std::string> saida = {
         instrucaoBin,
         tipo,
@@ -80,7 +79,7 @@ std::vector<std::string> criaSaida(std::string instrucaoBin, std::string tipo, s
         rd_out,
         rs1_out,
         rs2_out,
-        imm,
+        std::to_string(imm_out),
         funct3,
         funct7,
         "\nAssembly: " + assembly
@@ -96,9 +95,9 @@ std::vector<std::string> criaSaidaI(std::string instrucaoBin, std::string tipo, 
     std::string rd_out  = achaRegister(rd);
     std::string rs1_out = achaRegister(rs1);
 
-    int immConvertido = conversorBinInt(imm);
+    int imm_out = conversorBinSignedInt(imm);
 
-    std::string assembly = std::format("{} {}, {}, {}", mnemonico, rd_out, rs1_out, immConvertido);
+    std::string assembly = std::format("{} {}, {}, {}", mnemonico, rd_out, rs1_out, imm_out);
 
     if(mnemonico == "addi" && rd_out == "zero") assembly = "nop";
     if(mnemonico == "jalr" && rd_out == "zero") assembly = "ret";
@@ -111,7 +110,7 @@ std::vector<std::string> criaSaidaI(std::string instrucaoBin, std::string tipo, 
         rd_out,
         rs1_out,
         "(sem rs2)",
-        std::to_string(immConvertido),
+        std::to_string(imm_out),
         funct3,
         "(sem funct7)",
         "\nAssembly: " + assembly
@@ -127,7 +126,7 @@ std::vector<std::string> criaSaida(std::string instrucaoBin, std::string tipo, s
     std::string rs1_out  = achaRegister(rs1);
     std::string rs2_out  = achaRegister(rs2);
 
-    int imm_out          = conversorBinInt(imm);
+    int imm_out          = conversorBinSignedInt(imm);
 
     std::vector<std::string> saida = {
         instrucaoBin,
@@ -136,7 +135,7 @@ std::vector<std::string> criaSaida(std::string instrucaoBin, std::string tipo, s
         "(sem rd)",
         rs1_out,
         rs2_out,
-        imm,
+        std::to_string(imm_out),
         funct3,
         "(sem funct7)",
         std::format("\nAssembly: {} {}, {}, {}", mnemonico, rs1_out, rs2_out, imm_out)
@@ -151,6 +150,8 @@ std::vector<std::string> criaSaida(std::string instrucaoBin, std::string tipo, s
 
     std::string rd_out  = achaRegister(rd);
 
+    int imm_out         = conversorBinSignedInt(imm);
+
     std::vector<std::string> saida = {
         instrucaoBin,
         tipo,
@@ -158,10 +159,10 @@ std::vector<std::string> criaSaida(std::string instrucaoBin, std::string tipo, s
         rd_out,
         "(sem rs1)",
         "(sem rs2)",
-        imm,
+        std::to_string(imm_out),
         "(sem funct3)",
         "(sem funct7)",
-        std::format("\nAssembly: {} {}, {}", mnemonico, rd_out, conversorBinInt(imm))
+        std::format("\nAssembly: {} {}, {}", mnemonico, rd_out, imm_out)
     };
 
     return saida;
@@ -220,7 +221,7 @@ std::vector<std::string> decodificaTipoB(std::string instrucaoBin, std::string o
     std::string rs2                = instrucaoBin.substr(7, 4);
     std::string rs1                = instrucaoBin.substr(12, 4);
     std::string funct3             = instrucaoBin.substr(17, 3);
-    std::string imm4_1             = instrucaoBin.substr(20, 3);
+    std::string imm4_1             = instrucaoBin.substr(20, 4);
     std::string imm11              = instrucaoBin.substr(24, 1);
 
     std::string mnemonico          = achaMnemonico("0000000", opcode, funct3);
