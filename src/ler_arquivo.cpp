@@ -7,6 +7,8 @@
 std::vector<std::vector<std::string>> linhasLidas(std::string path) {
     std::ifstream arquivo(path);
 
+    if(!arquivo) return {};
+
     std::string linha;
     std::vector<std::vector<std::string>> instrucoes;
 

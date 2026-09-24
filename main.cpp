@@ -16,9 +16,21 @@ void printaInfos(vector<string> infos) {
 
 int main()
 {
+
+    string path;
+
+    cout << "Digite o nome do arquivo (com extensao)." << endl;
+    cin >> path;
+
+    vector<vector<string>> matrizLinhas = linhasLidas(path);
+
+    if(matrizLinhas.empty()){ 
+        cout << "Arquivo não encontrado" << endl;
+        return 0;
+    }
+
     float* contagem = (float*)calloc(6, sizeof(float));
     float cpi[6] = { 4.0, 3.0, 1.0, 5.0, 2.0, 3.0 };
-    vector<vector<string>> matrizLinhas = linhasLidas("arquivo_01.txt");
 
     for (int i = 0; i <  matrizLinhas.size(); i++) {
         cout << endl;
