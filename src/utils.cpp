@@ -1,8 +1,13 @@
 #include <iostream>
+#include <format>
+#include <fstream>
 #include "utils.h"
+#include "ler_arquivo.h"
+#include "decodificador.h"
 
+using namespace std;
 
-void contarTipoInst(std::string instTipo, float *contagem) {
+void contarTipoInst(string instTipo, float *contagem) {
     
     switch(instTipo.at(0)) {
         case 'R': contagem[0]++; break;
@@ -20,45 +25,46 @@ float calculoCpiMedio(int numeroTotalInst, float quantidade, float cpi) {
     
 }
 
-void geradorEstatistica(float *contagem, float *cpi, int totalInstrucoes) {
+vector<string> geradorEstatistica(float *contagem, float *cpi, int totalInstrucoes) {
+    vector<string> saida;
     float cpiMedioPrograma = 0;
     for (int i = 0; i < 6; i++) {
         cpiMedioPrograma += calculoCpiMedio(totalInstrucoes, contagem[i], cpi[i]);
     }
     
-    std::cout << std::endl;
-    std::cout << "Numero inst. Tipo R: " << contagem[0] << " Percentual: " << ((contagem[0]/totalInstrucoes)*100) << " %" << std::endl;
-    std::cout << "Numero inst. Tipo I: " << contagem[1] << " Percentual: " << ((contagem[1]/totalInstrucoes)*100) << " %" << std::endl;
-    std::cout << "Numero inst. Tipo S: " << contagem[2] << " Percentual: " << ((contagem[2]/totalInstrucoes)*100) << " %" << std::endl;
-    std::cout << "Numero inst. Tipo B: " << contagem[3] << " Percentual: " << ((contagem[3]/totalInstrucoes)*100) << " %" << std::endl;
-    std::cout << "Numero inst. Tipo U: " << contagem[4] << " Percentual: " << ((contagem[4]/totalInstrucoes)*100) << " %" << std::endl;
-    std::cout << "Numero inst. Tipo J: " << contagem[5] << " Percentual: " << ((contagem[5]/totalInstrucoes)*100) << " %" << std::endl;
-    std::cout << "Contagem total de instrucoes: " << totalInstrucoes << std::endl;
-    std::cout << "CPI medio programa: " << cpiMedioPrograma << std::endl;
+    saida.push_back(format("Numero inst. Tipo R: {} Percentual: {}% \n",contagem[0], (contagem[0]/totalInstrucoes)*100));
+    saida.push_back(format("Numero inst. Tipo I: {} Percentual: {}% \n",contagem[1], (contagem[1]/totalInstrucoes)*100));
+    saida.push_back(format("Numero inst. Tipo S: {} Percentual: {}% \n",contagem[2], (contagem[2]/totalInstrucoes)*100));
+    saida.push_back(format("Numero inst. Tipo B: {} Percentual: {}% \n",contagem[3], (contagem[3]/totalInstrucoes)*100));
+    saida.push_back(format("Numero inst. Tipo U: {} Percentual: {}% \n",contagem[4], (contagem[4]/totalInstrucoes)*100));
+    saida.push_back(format("Numero inst. Tipo J: {} Percentual: {}% \n",contagem[5], (contagem[5]/totalInstrucoes)*100));
+    saida.push_back(format("Contagem total de instrucoes: {}\n",totalInstrucoes));
+    saida.push_back(format("CPI medio do programa: {}\n",cpiMedioPrograma));
 
+    return saida;
 }
 
-int conversorBinUnsignedInt(std::string bin){
-    return std::stoi(bin, nullptr, 2);
+int conversorBinUnsignedInt(string bin){
+    return stoi(bin, nullptr, 2);
 }
 
-int conversorBinSignedInt(std::string bin) {
+int conversorBinSignedInt(string bin) {
     int contador = 0;
     int size = bin.size();
     for(int i = 0; i < size; i++) {
         int p = bin.at(i) - '0';
         if(i == 0) p *= -1;
-        contador += p * std::pow(2, size-i-1);
+        contador += p * pow(2, size-i-1);
     }
     return contador;
 }
 
-std::string conversorHexBin(std::string hex) {
+string conversorHexBin(string hex) {
 
-    std::string bin = "";
+    string bin = "";
 
     for (char c : hex) {
-        switch (std::toupper(c)) 
+        switch (toupper(c)) 
         {
             case '0': bin += "0000"; break; case '1': bin += "0001"; break;
             case '2': bin += "0010"; break; case '3': bin += "0011"; break;
@@ -75,6 +81,64 @@ std::string conversorHexBin(std::string hex) {
     return bin;
 }
 
-int hexToInt(std::string hex){
-    return std::stoi(hex, nullptr, 16);
+int hexToInt(string hex){
+    return stoi(hex, nullptr, 16);
+}
+
+bool gerarOutput(string inputPath){
+    
+    vector<vector<string>> matrizLinhas = linhasLidas(inputPath);
+
+    if(matrizLinhas.empty()){ 
+        cerr << "Arquivo não encontrado" << endl;
+        return false;
+    }
+
+    ofstream output("output.txt");
+    if(!output) {
+        cerr << "Erro ao escrever o output." << endl;
+        return false;
+    }
+
+    float* contagem = (float*)calloc(6, sizeof(float));
+    float cpi[6] = { 4.0, 3.0, 1.0, 5.0, 2.0, 3.0 };
+
+    for (int i = 0; i <  matrizLinhas.size(); i++) {
+        vector<string> instInfos = decodificaTipo(matrizLinhas[i][1]);
+        
+        if(instInfos[1] == "B"  || instInfos[1] == "J") {
+            int pos = instInfos[9].find_last_of(',');
+            instInfos[9].erase(pos);
+            instInfos[9] += format(", {:#x}", hexToInt(matrizLinhas[i][0]) + stoi(instInfos[6]));
+        }
+        
+        output << "tipo mnemonico rd rs1 rs2 imm funct3 funct7" << endl;
+        for(int i=1; i <= 9; i++) {
+            output << instInfos[i] << " ";
+        }
+
+        output << endl;
+
+        output << "PC = ";
+
+        output << matrizLinhas[i][0] << " ";
+
+        output << matrizLinhas[i][1] << endl;
+
+        contarTipoInst(instInfos[1], contagem);
+
+        output << endl;
+    }
+
+    int totalInstrucoes = matrizLinhas.size();
+
+    vector<string> estatisticas = geradorEstatistica(contagem, cpi, totalInstrucoes);
+    output << endl;
+    for(int i=0; i < estatisticas.size(); i++){
+        output << estatisticas[i];
+    }
+
+    output.close();
+
+    return true;
 }
