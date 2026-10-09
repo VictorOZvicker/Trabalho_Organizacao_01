@@ -15,6 +15,8 @@ std::string conversorHexBin(std::string hex);
 int hexToInt(std::string hex);
 
 
-bool gerarOutput(std::string inputPath); 
+bool gerarOutput(std::string inputPath);
+
+
 
 #endif

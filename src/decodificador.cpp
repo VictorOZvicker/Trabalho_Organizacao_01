@@ -109,10 +109,10 @@ std::vector<std::string> criaSaidaI(std::string instrucaoBin, std::string tipo, 
         (assembly == "ecall") ? assembly : mnemonico,
         rd_out,
         rs1_out,
-        "(sem rs2)",
+        "",
         std::to_string(imm_out),
         funct3,
-        "(sem funct7)",
+        "",
         "\nAssembly: " + assembly
     };
 
@@ -132,12 +132,12 @@ std::vector<std::string> criaSaida(std::string instrucaoBin, std::string tipo, s
         instrucaoBin,
         tipo,
         mnemonico,
-        "(sem rd)",
+        "",
         rs1_out,
         rs2_out,
         std::to_string(imm_out),
         funct3,
-        "(sem funct7)",
+        "",
         std::format("\nAssembly: {} {}, {}, {}", mnemonico, rs1_out, rs2_out, imm_out)
     };
 
@@ -157,11 +157,11 @@ std::vector<std::string> criaSaida(std::string instrucaoBin, std::string tipo, s
         tipo,
         mnemonico,
         rd_out,
-        "(sem rs1)",
-        "(sem rs2)",
+        "",
+        "",
         std::to_string(imm_out),
-        "(sem funct3)",
-        "(sem funct7)",
+        "",
+        "",
         std::format("\nAssembly: {} {}, {}", mnemonico, rd_out, imm_out)
     };
 

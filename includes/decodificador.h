@@ -7,12 +7,7 @@
 #include <map>
 
 std::vector<std::string> decodificaTipo(std::string instrucaoBin);
-std::vector<std::string> decodificaTipoR(std::string instrucaoBin, std::string opcode = "");
-std::vector<std::string> decodificaTipoI(std::string instrucaoBin, std::string opcode = "");
-std::vector<std::string> decodificaTipoS(std::string instrucaoBin, std::string opcode = "");
-std::vector<std::string> decodificaTipoB(std::string instrucaoBin, std::string opcode = "");
-std::vector<std::string> decodificaTipoU(std::string instrucaoBin, std::string opcode = "");
-std::vector<std::string> decodificaTipoJ(std::string instrucaoBin);
+
 
 /*
 Saidas:
