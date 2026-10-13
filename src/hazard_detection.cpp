@@ -12,7 +12,9 @@ bool hazard_ahead(vector<vector<string>> next_inst, int curr_inst , bool forward
     
     
     for(int i=0; i < 4; i++) {
-        if()
+        if(true) {
+
+        }
     }
 
     return false;

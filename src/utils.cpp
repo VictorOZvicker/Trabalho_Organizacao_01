@@ -96,9 +96,8 @@ vector<vector<string>> extrair_inst_infos(string inputPath){
     vector<vector<string>> instInfos;
 
     for(int i=0; i < matrizLinhas.size(); i++){
-        
-        instInfos.push_back(decodificaTipo(matrizLinhas[1][i]));
-
+        instInfos.push_back(decodificaTipo(matrizLinhas[i][1]));
+        instInfos[i].push_back(matrizLinhas[i][0]);
     }
 
     return instInfos;
@@ -117,35 +116,36 @@ bool gerarOutput(string inputPath){
     float* contagem = (float*)calloc(6, sizeof(float));
     float cpi[6] = { 4.0, 3.0, 1.0, 5.0, 2.0, 3.0 };
 
-    vector<string> instInfos = extrair_inst_infos(inputPath);
-    for (int i = 0; i <  matrizLinhas.size(); i++) {
+    vector<vector<string>> instInfos = extrair_inst_infos(inputPath);
+
+    for (int i = 0; i <  instInfos.size(); i++) {
         
         
-        if(instInfos[i][1] == "B"  || instInfos[1] == "J") {
-            int pos = instInfos[9].find_last_of(',');
+        if(instInfos[i][1] == "B"  || instInfos[i][1] == "J") {
+            int pos = instInfos[i][9].find_last_of(',');
             instInfos[i][9].erase(pos);
-            instInfos[i][9] += format(", {:#x}", hexToInt(matrizLinhas[i][0]) + stoi(instInfos[6]));
+            instInfos[i][9] += format(", {:#x}", hexToInt(instInfos[i][10]) + stoi(instInfos[i][6]));
         }
         
         output << "tipo mnemonico rd rs1 rs2 imm funct3 funct7" << endl;
-        for(int i=1; i <= 9; i++) {
-            output << instInfos[i] << " ";
+        for(int j=1; j <= 9; j++) {
+            output << instInfos[i][j] << " ";
         }
 
         output << endl;
 
         output << "PC = ";
 
-        output << matrizLinhas[i][0] << " ";
+        output << instInfos[i][10] << " ";
 
-        output << matrizLinhas[i][1] << endl;
+        output << instInfos[i][0] << endl;
 
-        contarTipoInst(instInfos[1], contagem);
+        contarTipoInst(instInfos[i][1], contagem);
 
         output << endl;
     }
 
-    int totalInstrucoes = matrizLinhas.size();
+    int totalInstrucoes = instInfos.size();
 
     vector<string> estatisticas = geradorEstatistica(contagem, cpi, totalInstrucoes);
     output << endl;
