@@ -1,15 +1,14 @@
 #include "decodificador.h"
 #include "utils.h"
-#include <format>
 
-std::vector<std::string> decodificaTipoR(std::string instrucaoBin, std::string opcode);
-std::vector<std::string> decodificaTipoI(std::string instrucaoBin, std::string opcode);
-std::vector<std::string> decodificaTipoS(std::string instrucaoBin, std::string opcode);
-std::vector<std::string> decodificaTipoB(std::string instrucaoBin, std::string opcode);
-std::vector<std::string> decodificaTipoU(std::string instrucaoBin, std::string opcode);
-std::vector<std::string> decodificaTipoJ(std::string instrucaoBin);
+Instruction decodificaTipoR(std::string instrucaoBin, std::string opcode);
+Instruction decodificaTipoI(std::string instrucaoBin, std::string opcode);
+Instruction decodificaTipoS(std::string instrucaoBin, std::string opcode);
+Instruction decodificaTipoB(std::string instrucaoBin, std::string opcode);
+Instruction decodificaTipoU(std::string instrucaoBin, std::string opcode);
+Instruction decodificaTipoJ(std::string instrucaoBin);
 
-std::vector<std::string> decodificaTipo(std::string instrucaoBin) {
+Instruction decodificaTipo(std::string instrucaoBin) {
     
     std::string opcode = instrucaoBin.substr(25, 7);
 
@@ -65,117 +64,118 @@ std::string construtorImm(std::vector<std::string> pedacosImm) {
     return immCompleto;
 }
 
-std::vector<std::string> criaSaida(std::string instrucaoBin, std::string tipo, std::string mnemonico, 
+Instruction criaSaida(std::string instrucaoBin, std::string tipo, std::string mnemonico, 
     std::string rd, std::string rs1, std::string rs2, std::string imm, std::string funct3, std::string funct7) {
     
+    Instruction saida;
 
     std::string rd_out   = achaRegister(rd);
     std::string rs1_out  = achaRegister(rs1);
     std::string rs2_out  = achaRegister(rs2);
 
-    std::string assembly = std::format("{} {}, {}, {}", mnemonico, rd_out, rs1_out, rs2_out);
+    std::string assembly = std::format("\nAssembly: {} {}, {}, {}", mnemonico, rd_out, rs1_out, rs2_out);
 
     if(mnemonico == "add" && rd_out == "zero") assembly = "nop";
 
-    int imm_out = conversorBinSignedInt(imm);
-
-    std::vector<std::string> saida = {
-        instrucaoBin,
-        tipo,
-        mnemonico,
-        rd_out,
-        rs1_out,
-        rs2_out,
-        std::to_string(imm_out),
-        funct3,
-        funct7,
-        "\nAssembly: " + assembly
-    };
+    int imm_out     = conversorBinSignedInt(imm);
+    
+    saida.bin       = instrucaoBin;
+    saida.formato   = tipo;
+    saida.mnemonico = mnemonico;
+    saida.rd        = rd_out;
+    saida.rs1       = rs1_out;
+    saida.rs2       = rs2_out;
+    saida.imm       = std::to_string(imm_out);
+    saida.funct3    = funct3;
+    saida.funct7    = funct7;
+    saida.assembly  = assembly;
 
     return saida;
 }
 
-std::vector<std::string> criaSaidaI(std::string instrucaoBin, std::string tipo, std::string mnemonico, 
+Instruction criaSaidaI(std::string instrucaoBin, std::string tipo, std::string mnemonico, 
     std::string rd, std::string rs1, std::string imm, std::string funct3) {
     
-
+    Instruction saida;
+    
     std::string rd_out  = achaRegister(rd);
     std::string rs1_out = achaRegister(rs1);
 
     int imm_out = conversorBinSignedInt(imm);
 
-    std::string assembly = std::format("{} {}, {}, {}", mnemonico, rd_out, rs1_out, imm_out);
+    std::string assembly = std::format("\nAssembly: {} {}, {}, {}", mnemonico, rd_out, rs1_out, imm_out);
 
     if(mnemonico == "addi" && rd_out == "zero") assembly = "nop";
     if(mnemonico == "jalr" && rd_out == "zero") assembly = "ret";
-    if(instrucaoBin == "00000000000000000000000001110011") assembly = "ecall";
+    if(instrucaoBin == "00000000000000000000000001110011"){
+        assembly  = "\nAssembly: ecall";
+        mnemonico = "ecall";
+    } 
+    
+   
 
-    std::vector<std::string> saida = {
-        instrucaoBin,
-        tipo,
-        (assembly == "ecall") ? assembly : mnemonico,
-        rd_out,
-        rs1_out,
-        "",
-        std::to_string(imm_out),
-        funct3,
-        "",
-        "\nAssembly: " + assembly
-    };
+    saida.bin       = instrucaoBin;
+    saida.formato   = tipo;
+    saida.mnemonico = (assembly == "ecall") ? assembly : mnemonico;
+    saida.rd        = rd_out;
+    saida.rs1       = rs1_out;
+    saida.rs2       = "";
+    saida.imm       = std::to_string(imm_out);
+    saida.funct3    = funct3;
+    saida.funct7    = "";
+    saida.assembly  = assembly;
 
     return saida;
 }
 
-std::vector<std::string> criaSaida(std::string instrucaoBin, std::string tipo, std::string mnemonico, 
+Instruction criaSaida(std::string instrucaoBin, std::string tipo, std::string mnemonico, 
     std::string rs1, std::string rs2, std::string imm, std::string funct3) {
     
+    Instruction saida;
 
     std::string rs1_out  = achaRegister(rs1);
     std::string rs2_out  = achaRegister(rs2);
 
     int imm_out          = conversorBinSignedInt(imm);
-
-    std::vector<std::string> saida = {
-        instrucaoBin,
-        tipo,
-        mnemonico,
-        "",
-        rs1_out,
-        rs2_out,
-        std::to_string(imm_out),
-        funct3,
-        "",
-        std::format("\nAssembly: {} {}, {}, {}", mnemonico, rs1_out, rs2_out, imm_out)
-    };
+    
+    saida.bin            = instrucaoBin;
+    saida.formato        = tipo;
+    saida.mnemonico      = mnemonico;
+    saida.rd             = "";
+    saida.rs1            = rs1_out;
+    saida.rs2            = rs2_out;
+    saida.imm            = std::to_string(imm_out);
+    saida.funct3         = funct3;
+    saida.funct7         = "";
+    saida.assembly       = std::format("\nAssembly: {} {}, {}, {}", mnemonico, rs1_out, rs2_out, imm_out);
 
     return saida;
 }
 
-std::vector<std::string> criaSaida(std::string instrucaoBin, std::string tipo, std::string mnemonico, 
+Instruction criaSaida(std::string instrucaoBin, std::string tipo, std::string mnemonico, 
     std::string rd, std::string imm) {
     
-
+    Instruction saida;
+    
     std::string rd_out  = achaRegister(rd);
 
     int imm_out         = conversorBinSignedInt(imm);
-
-    std::vector<std::string> saida = {
-        instrucaoBin,
-        tipo,
-        mnemonico,
-        rd_out,
-        "",
-        "",
-        std::to_string(imm_out),
-        "",
-        "",
-        std::format("\nAssembly: {} {}, {}", mnemonico, rd_out, imm_out)
-    };
+    
+    saida.bin           = instrucaoBin;
+    saida.formato       = tipo;
+    saida.mnemonico     = mnemonico;
+    saida.rd            = rd_out;
+    saida.rs1           = "";
+    saida.rs2           = "";
+    saida.imm           = std::to_string(imm_out);
+    saida.funct3        = "";
+    saida.funct7        = "";
+    saida.assembly      = std::format("\nAssembly: {} {}, {}", mnemonico, rd_out, imm_out);
 
     return saida;
 }
 
-std::vector<std::string> decodificaTipoR(std::string instrucaoBin, std::string opcode) {
+Instruction decodificaTipoR(std::string instrucaoBin, std::string opcode) {
     
     std::string funct7             = instrucaoBin.substr(0, 7);
     std::string rs2                = instrucaoBin.substr(7, 5);
@@ -185,12 +185,12 @@ std::vector<std::string> decodificaTipoR(std::string instrucaoBin, std::string o
 
     std::string mnemonico          = achaMnemonico(funct7, opcode, funct3);
 
-    std::vector<std::string> saida = criaSaida(instrucaoBin, "R", mnemonico, rd, rs1, rs2, "", funct3, funct7);
+    Instruction saida = criaSaida(instrucaoBin, "R", mnemonico, rd, rs1, rs2, "", funct3, funct7);
 
     return saida;
 }
 
-std::vector<std::string> decodificaTipoI(std::string instrucaoBin, std::string opcode) {
+Instruction decodificaTipoI(std::string instrucaoBin, std::string opcode) {
     
     std::string imm11_0            = instrucaoBin.substr(0, 12);
     std::string rs1                = instrucaoBin.substr(12, 5);
@@ -199,12 +199,12 @@ std::vector<std::string> decodificaTipoI(std::string instrucaoBin, std::string o
 
     std::string mnemonico          = achaMnemonico("0000000", opcode, funct3);
 
-    std::vector<std::string> saida = criaSaidaI(instrucaoBin, "I", mnemonico, rd, rs1, imm11_0, funct3);
+    Instruction saida = criaSaidaI(instrucaoBin, "I", mnemonico, rd, rs1, imm11_0, funct3);
 
     return saida;
 }
 
-std::vector<std::string> decodificaTipoS(std::string instrucaoBin, std::string opcode) {
+Instruction decodificaTipoS(std::string instrucaoBin, std::string opcode) {
     
     std::string imm11_5            = instrucaoBin.substr(0, 7);
     std::string rs2                = instrucaoBin.substr(7, 5);
@@ -216,12 +216,12 @@ std::vector<std::string> decodificaTipoS(std::string instrucaoBin, std::string o
 
     std::string immCompleto        = construtorImm({imm11_5, imm4_0});
 
-    std::vector<std::string> saida = criaSaida(instrucaoBin, "S", mnemonico, rs1, rs2, immCompleto, funct3);
+    Instruction saida = criaSaida(instrucaoBin, "S", mnemonico, rs1, rs2, immCompleto, funct3);
 
     return saida;
 }
 
-std::vector<std::string> decodificaTipoB(std::string instrucaoBin, std::string opcode) {
+Instruction decodificaTipoB(std::string instrucaoBin, std::string opcode) {
     
     std::string imm12              = instrucaoBin.substr(0, 1);
     std::string imm10_5            = instrucaoBin.substr(1, 5);
@@ -235,24 +235,24 @@ std::vector<std::string> decodificaTipoB(std::string instrucaoBin, std::string o
 
     std::string immCompleto        = construtorImm({imm12, imm11, imm10_5, imm4_1, "0"});
 
-    std::vector<std::string> saida = criaSaida(instrucaoBin, "B", mnemonico, rs1, rs2, immCompleto, funct3);
+    Instruction saida = criaSaida(instrucaoBin, "B", mnemonico, rs1, rs2, immCompleto, funct3);
 
     return saida;
 }
 
-std::vector<std::string> decodificaTipoU(std::string instrucaoBin, std::string opcode) {
+Instruction decodificaTipoU(std::string instrucaoBin, std::string opcode) {
 
     std::string imm                = instrucaoBin.substr(0, 20);
     std::string rd                 = instrucaoBin.substr(20, 5);
 
     std::string mnemonico          = (opcode == "0110111") ? "lui" : "auipc";
 
-    std::vector<std::string> saida = criaSaida(instrucaoBin, "U", mnemonico, rd, imm);
+    Instruction saida = criaSaida(instrucaoBin, "U", mnemonico, rd, imm);
     
     return saida;
 }
 
-std::vector<std::string> decodificaTipoJ(std::string instrucaoBin) {
+Instruction decodificaTipoJ(std::string instrucaoBin) {
     
     std::string imm20              = instrucaoBin.substr(0, 1);
     std::string imm10_1            = instrucaoBin.substr(1, 10);
@@ -264,7 +264,7 @@ std::vector<std::string> decodificaTipoJ(std::string instrucaoBin) {
 
     std::string immCompleto        = construtorImm({imm20, imm19_12, imm11, imm10_1 , "0"});
 
-    std::vector<std::string> saida = criaSaida(instrucaoBin, "J", mnemonico, rd, immCompleto);
+    Instruction saida = criaSaida(instrucaoBin, "J", mnemonico, rd, immCompleto);
 
     return saida;
 }

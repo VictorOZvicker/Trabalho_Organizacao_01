@@ -1,6 +1,6 @@
-#include <iostream>
+#include "global.h"
+
 #include <fstream>
-#include <format>
 #include "ler_arquivo.h"
 #include "utils.h"
 
