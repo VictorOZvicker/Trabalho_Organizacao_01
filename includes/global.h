@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <format>
+#include <vector>
 #include <map>
 
 typedef struct Instruction Instruction;

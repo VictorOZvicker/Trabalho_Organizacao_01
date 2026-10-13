@@ -2,6 +2,9 @@
 
 using namespace std;
 
+
+int hazardDetection(vector<struct Instruction> program, int currInst, int psize);
+
 vector<struct Instruction> resolucaoNop(vector<struct Instruction> program) {
 
     int psize = program.size();
@@ -14,7 +17,7 @@ vector<struct Instruction> resolucaoNop(vector<struct Instruction> program) {
         newOrder.push_back(program.at(pc));
 
         for(int e = 3 - hazardDetection(program, pc, psize); e > 0; e--){ 
-            // INSERE NOPS
+            newOrder.push_back(nop());
         }
 
     }

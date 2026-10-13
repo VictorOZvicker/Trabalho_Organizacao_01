@@ -1,11 +1,9 @@
 #ifndef HAZARD_DETECTION_H
 #define HAZARD_DETECTION_H
 
-#include "decodificador.h"
-#include <string>
-#include <vector>
+#include "global.h"
 
-bool hazard(std::vector<std::vector<std::string>> program);
+std::vector<struct Instruction> resolucaoNop(std::vector<std::vector<struct Instruction>> program);
 
 
 
