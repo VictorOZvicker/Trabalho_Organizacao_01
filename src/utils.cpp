@@ -1,5 +1,5 @@
-#include <iostream>
-#include <format>
+#include <global.h>
+
 #include <fstream>
 #include "utils.h"
 #include "ler_arquivo.h"
@@ -85,19 +85,24 @@ int hexToInt(string hex){
     return stoi(hex, nullptr, 16);
 }
 
-vector<vector<string>> extrairInstInfos(string inputPath){
+vector<Instruction> extrair_inst_infos(vector<vector<string>> instLidas){
 
-    vector<vector<string>> matrizLinhas = linhasLidas(inputPath);
-
-    if(matrizLinhas.empty()){ 
+    if(instLidas.empty()){ 
         cerr << "Arquivo não encontrado" << endl;
         return {};
     }
-    vector<vector<string>> instInfos;
+    vector<Instruction> instInfos;
 
-    for(int i=0; i < matrizLinhas.size(); i++){
-        instInfos.push_back(decodificaTipo(matrizLinhas[i][1]));
-        instInfos[i].push_back(matrizLinhas[i][0]);
+    for(int i=0; i < instLidas.size(); i++)
+    {
+        instInfos.push_back(decodificaTipo(instLidas[i][1]));
+
+        if(instInfos[i].formato == "B"  || instInfos[i].formato == "J")
+        {
+            int pos = instInfos[i].assembly.find_last_of(',');
+            instInfos[i].assembly.erase(pos);
+            instInfos[i].assembly += format(", {:#x}", hexToInt(instLidas[i][0]) + stoi(instInfos[i].imm));
+        }
     }
 
     return instInfos;
@@ -105,7 +110,6 @@ vector<vector<string>> extrairInstInfos(string inputPath){
 
 
 bool gerarOutput(string inputPath){
-
 
     ofstream output("output.txt");
     if(!output) {
@@ -116,31 +120,32 @@ bool gerarOutput(string inputPath){
     float* contagem = (float*)calloc(6, sizeof(float));
     float cpi[6] = { 4.0, 3.0, 1.0, 5.0, 2.0, 3.0 };
 
-    vector<vector<string>> instInfos = extrairInstInfos(inputPath);
+    vector<vector<string>> instLidas = linhasLidas(inputPath);
+
+    vector<Instruction> instInfos = extrair_inst_infos(instLidas);
 
     for (int i = 0; i <  instInfos.size(); i++) {
-        
-        
-        if(instInfos[i][1] == "B"  || instInfos[i][1] == "J") {
-            int pos = instInfos[i][9].find_last_of(',');
-            instInfos[i][9].erase(pos);
-            instInfos[i][9] += format(", {:#x}", hexToInt(instInfos[i][10]) + stoi(instInfos[i][6]));
-        }
-        
+
         output << "tipo mnemonico rd rs1 rs2 imm funct3 funct7" << endl;
-        for(int j=1; j <= 9; j++) {
-            output << instInfos[i][j] << " ";
-        }
+        output << instInfos[i].formato   << " ";
+        output << instInfos[i].mnemonico << " ";
+        output << instInfos[i].rd        << " ";
+        output << instInfos[i].rs1       << " ";
+        output << instInfos[i].rs2       << " ";
+        output << instInfos[i].imm       << " ";
+        output << instInfos[i].funct3    << " ";
+        output << instInfos[i].funct7    << " ";
+        output << instInfos[i].assembly  << " ";
 
         output << endl;
 
         output << "PC = ";
 
-        output << instInfos[i][10] << " ";
+        output << instLidas[i][0] << " ";
 
-        output << instInfos[i][0] << endl;
+        output << instInfos[i].bin << endl;
 
-        contarTipoInst(instInfos[i][1], contagem);
+        contarTipoInst(instInfos[i].formato, contagem);
 
         output << endl;
     }

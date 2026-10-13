@@ -21,47 +21,32 @@ PC = 0xc 00000000000001010000010100010011
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
 I ecall zero zero  0 000  
 Assembly: ecall 
-PC = 0x5c 00000000000000000000000001110011
+PC = 0x10 00000000000000000000000001110011
 
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
 I addi a7 zero  5 000  
 Assembly: addi a7, zero, 5 
-PC = 0x60 00000000010100000000100010010011
+PC = 0x14 00000000010100000000100010010011
 
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
 I ecall zero zero  0 000  
 Assembly: ecall 
-PC = 0x64 00000000000000000000000001110011
+PC = 0x18 00000000000000000000000001110011
 
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
-R add s2 zero a0 0 000 0000000 
-Assembly: add s2, zero, a0 
-PC = 0x68 00000000101000000000100100110011
-
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-B blt (sem rd) s2 zero -32 100 (sem funct7) 
-Assembly: blt s2, zero, 0x4c 
-PC = 0x6c 11111110000010010100000011100011
-
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-B blt (sem rd) t6 s2 -4 100 (sem funct7) 
-Assembly: blt t6, s2, 0x6c 
-PC = 0x70 11111101001011111100111011100011
-
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-I addi t6 zero (sem rs2) 1 000 (sem funct7) 
-Assembly: addi t6, zero, 1 
-PC = 0x74 00000000000100000000111110010011
+R add t0 zero a0 0 000 0000000 
+Assembly: add t0, zero, a0 
+PC = 0x1c 00000000101000000000001010110011
 
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
 I addi a7 zero  4 000  
 Assembly: addi a7, zero, 4 
-PC = 0x78 00000000010000000000100010010011
+PC = 0x20 00000000010000000000100010010011
 
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
 U lui a0   65536   
 Assembly: lui a0, 65536 
-PC = 0x7c 00010000000000000000010100110111
+PC = 0x24 00010000000000000000010100110111
 
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
 I addi a0 a0  26 000  
@@ -71,62 +56,22 @@ PC = 0x28 00000001101001010000010100010011
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
 I ecall zero zero  0 000  
 Assembly: ecall 
-PC = 0x84 00000000000000000000000001110011
+PC = 0x2c 00000000000000000000000001110011
 
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
 I addi a7 zero  5 000  
 Assembly: addi a7, zero, 5 
-PC = 0x88 00000000010100000000100010010011
+PC = 0x30 00000000010100000000100010010011
 
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
 I ecall zero zero  0 000  
 Assembly: ecall 
-PC = 0x8c 00000000000000000000000001110011
+PC = 0x34 00000000000000000000000001110011
 
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
-R add s3 zero a0 0 000 0000000 
-Assembly: add s3, zero, a0 
-PC = 0x90 00000000101000000000100110110011
-
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-B blt (sem rd) s3 zero -32 100 (sem funct7) 
-Assembly: blt s3, zero, 0x74 
-PC = 0x94 11111110000010011100000011100011
-
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-B blt (sem rd) t6 s3 -4 100 (sem funct7) 
-Assembly: blt t6, s3, 0x94 
-PC = 0x98 11111101001111111100111011100011
-
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-B beq (sem rd) s3 zero 20 000 (sem funct7) 
-Assembly: beq s3, zero, 0xb0 
-PC = 0x9c 00000000000010011000101001100011
-
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-I addi t3 zero (sem rs2) 1 000 (sem funct7) 
-Assembly: addi t3, zero, 1 
-PC = 0xa0 00000000000100000000111000010011
-
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-R sll t3 t3 s2 0 001 0000000 
-Assembly: sll t3, t3, s2 
-PC = 0xa4 00000001001011100001111000110011
-
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-R or t2 t2 t3 0 110 0000000 
-Assembly: or t2, t2, t3 
-PC = 0xa8 00000001110000111110001110110011
-
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-J jal ra (sem rs1) (sem rs2) 20 (sem funct3) (sem funct7) 
-Assembly: jal ra, 0xc0 
-PC = 0xac 00000001010000000000000011101111
-
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-I addi t3 zero (sem rs2) 1 000 (sem funct7) 
-Assembly: addi t3, zero, 1 
-PC = 0xb0 00000000000100000000111000010011
+R add t1 zero a0 0 000 0000000 
+Assembly: add t1, zero, a0 
+PC = 0x38 00000000101000000000001100110011
 
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
 B beq  t1 zero 28 000  
@@ -144,9 +89,9 @@ Assembly: beq t3, zero, 0x4c
 PC = 0x44 00000000000011100000010001100011
 
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
-S sw (sem rd) t1 t2 0 010 (sem funct7) 
-Assembly: sw t1, t2, 0 
-PC = 0xc0 00000000011100110010000000100011
+R add t2 t0 t2 0 000 0000000 
+Assembly: add t2, t0, t2 
+PC = 0x48 00000000011100101000001110110011
 
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
 I slli t0 t0  1 001  
@@ -169,36 +114,25 @@ Assembly: addi a7, zero, 1
 PC = 0x58 00000000000100000000100010010011
 
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
-I addi a7 zero (sem rs2) 5 000 (sem funct7) 
-Assembly: addi a7, zero, 5 
-PC = 0xd4 00000000010100000000100010010011
+R add a0 zero t2 0 000 0000000 
+Assembly: add a0, zero, t2 
+PC = 0x5c 00000000011100000000010100110011
 
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
 I ecall zero zero  0 000  
 Assembly: ecall 
-PC = 0xd8 00000000000000000000000001110011
+PC = 0x60 00000000000000000000000001110011
 
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
-R add s1 zero a0 0 000 0000000 
-Assembly: add s1, zero, a0 
-PC = 0xdc 00000000101000000000010010110011
-
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-B beq (sem rd) s1 t6 -120 000 (sem funct7) 
-Assembly: beq s1, t6, 0x68 
-PC = 0xe0 11110011111101001000010011100011
-
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-I addi zero zero  0 000  
-Assembly: nop 
-PC = 0xe4 00000000000000000000000000010011
+I addi zero zero  0 000  nop 
+PC = 0x64 00000000000000000000000000010011
 
 
-Numero inst. Tipo R: 10 Percentual: 17.241379% 
-Numero inst. Tipo I: 31 Percentual: 53.448277% 
-Numero inst. Tipo S: 1 Percentual: 1.7241379% 
-Numero inst. Tipo B: 9 Percentual: 15.517241% 
-Numero inst. Tipo U: 5 Percentual: 8.620689% 
-Numero inst. Tipo J: 2 Percentual: 3.4482758% 
-Contagem total de instrucoes: 58
-CPI medio do programa: 3.3620691
+Numero inst. Tipo R: 4 Percentual: 15.384616% 
+Numero inst. Tipo I: 17 Percentual: 65.38461% 
+Numero inst. Tipo S: 0 Percentual: 0% 
+Numero inst. Tipo B: 2 Percentual: 7.692308% 
+Numero inst. Tipo U: 2 Percentual: 7.692308% 
+Numero inst. Tipo J: 1 Percentual: 3.846154% 
+Contagem total de instrucoes: 26
+CPI medio do programa: 3.2307694
