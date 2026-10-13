@@ -23,6 +23,18 @@ Saidas:
 9 -> assembly
 */
 
+struct Instruction {
+    std::string bin;
+    std::string formato;
+    std::string mnemonico;
+    std::string rd;
+    std::string rs1;
+    std::string rs2;
+    std::string imm;
+    std::string funct3;
+    std::string funct7;
+    std::string assembly;
+} Instruction;
 
 /*
 Para fazer a detecção de mnemonicos vamos usar o map para organizar todos eles.
