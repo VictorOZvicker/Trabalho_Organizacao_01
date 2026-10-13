@@ -2,20 +2,36 @@
 
 using namespace std;
 
-bool hazard(vector<vector<string>> program) {
+vector<struct Instruction> resolucaoNop(vector<struct Instruction> program) {
 
+    int psize = program.size();
 
+    vector<struct Instruction> newOrder;
+
+    for(int pc=0; pc < psize; pc++){
+        if(program.at(pc).rd == "zero") {continue;}
+        
+        newOrder.push_back(program.at(pc));
+
+        for(int e = 3 - hazardDetection(program, pc, psize); e > 0; e--){ 
+            // INSERE NOPS
+        }
+
+    }
     
+    return newOrder;
 }
 
-bool hazard_ahead(vector<vector<string>> next_inst, int curr_inst , bool forwarder = 0) {
+int hazardDetection(vector<struct Instruction> program, int currInst, int psize) {
     
-    
-    for(int i=0; i < 4; i++) {
-        if(true) {
+    if(program.at(currInst).formato == "B" || program.at(currInst).formato == "J") return 1;
 
-        }
+    for(int i=1; i < 3; i++) {
+        if(currInst + i >= psize) break;
+
+        if(program.at(currInst + i).rs1 == program.at(currInst).rd || program.at(currInst + i).rs2 == program.at(currInst).rd) 
+            return i;
     }
 
-    return false;
+    return 0;
 }

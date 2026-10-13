@@ -85,7 +85,7 @@ int hexToInt(string hex){
     return stoi(hex, nullptr, 16);
 }
 
-vector<vector<string>> extrair_inst_infos(string inputPath){
+vector<vector<string>> extrairInstInfos(string inputPath){
 
     vector<vector<string>> matrizLinhas = linhasLidas(inputPath);
 
@@ -116,7 +116,7 @@ bool gerarOutput(string inputPath){
     float* contagem = (float*)calloc(6, sizeof(float));
     float cpi[6] = { 4.0, 3.0, 1.0, 5.0, 2.0, 3.0 };
 
-    vector<vector<string>> instInfos = extrair_inst_infos(inputPath);
+    vector<vector<string>> instInfos = extrairInstInfos(inputPath);
 
     for (int i = 0; i <  instInfos.size(); i++) {
         
