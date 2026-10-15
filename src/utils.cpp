@@ -1,9 +1,8 @@
-#include <global.h>
-
 #include <fstream>
 #include "utils.h"
 #include "ler_arquivo.h"
 #include "decodificador.h"
+#include "hazard_detection.h"
 
 using namespace std;
 
@@ -85,7 +84,9 @@ int hexToInt(string hex){
     return stoi(hex, nullptr, 16);
 }
 
-vector<Instruction> extrair_inst_infos(vector<vector<string>> instLidas){
+vector<Instruction> extrairInstInfos(string path){
+
+    vector<string> instLidas = linhasLidas(path);
 
     if(instLidas.empty()){ 
         cerr << "Arquivo não encontrado" << endl;
@@ -95,21 +96,15 @@ vector<Instruction> extrair_inst_infos(vector<vector<string>> instLidas){
 
     for(int i=0; i < instLidas.size(); i++)
     {
-        instInfos.push_back(decodificaTipo(instLidas[i][1]));
+        instInfos.push_back(decodificaTipo(instLidas[i]));
 
-        if(instInfos[i].formato == "B"  || instInfos[i].formato == "J")
-        {
-            int pos = instInfos[i].assembly.find_last_of(',');
-            instInfos[i].assembly.erase(pos);
-            instInfos[i].assembly += format(", {:#x}", hexToInt(instLidas[i][0]) + stoi(instInfos[i].imm));
-        }
+        // DEPOIS TEM QUE AJUSTAR O CAMINHO ABSOLUTO DOS JUMPS/BRANCHS
     }
 
     return instInfos;
 }
 
-
-bool gerarOutput(string inputPath){
+bool gerarOutput(vector<Instruction> insts){
 
     ofstream output("output.txt");
     if(!output) {
@@ -120,37 +115,33 @@ bool gerarOutput(string inputPath){
     float* contagem = (float*)calloc(6, sizeof(float));
     float cpi[6] = { 4.0, 3.0, 1.0, 5.0, 2.0, 3.0 };
 
-    vector<vector<string>> instLidas = linhasLidas(inputPath);
-
-    vector<Instruction> instInfos = extrair_inst_infos(instLidas);
-
-    for (int i = 0; i <  instInfos.size(); i++) {
+    for (int i = 0; i <  insts.size(); i++) {
 
         output << "tipo mnemonico rd rs1 rs2 imm funct3 funct7" << endl;
-        output << instInfos[i].formato   << " ";
-        output << instInfos[i].mnemonico << " ";
-        output << instInfos[i].rd        << " ";
-        output << instInfos[i].rs1       << " ";
-        output << instInfos[i].rs2       << " ";
-        output << instInfos[i].imm       << " ";
-        output << instInfos[i].funct3    << " ";
-        output << instInfos[i].funct7    << " ";
-        output << instInfos[i].assembly  << " ";
+        output << insts[i].formato   << " ";
+        output << insts[i].mnemonico << " ";
+        output << insts[i].rd        << " ";
+        output << insts[i].rs1       << " ";
+        output << insts[i].rs2       << " ";
+        output << insts[i].imm       << " ";
+        output << insts[i].funct3    << " ";
+        output << insts[i].funct7    << " ";
+        output << insts[i].assembly  << " ";
 
         output << endl;
 
         output << "PC = ";
 
-        output << instLidas[i][0] << " ";
+        output << i*4 << " ";
 
-        output << instInfos[i].bin << endl;
+        output << insts[i].bin << endl;
 
-        contarTipoInst(instInfos[i].formato, contagem);
+        contarTipoInst(insts[i].formato, contagem);
 
         output << endl;
     }
 
-    int totalInstrucoes = instInfos.size();
+    int totalInstrucoes = insts.size();
 
     vector<string> estatisticas = geradorEstatistica(contagem, cpi, totalInstrucoes);
     output << endl;
@@ -163,4 +154,27 @@ bool gerarOutput(string inputPath){
     return true;
 }
 
+bool menu(string inputPath) {
 
+    cout << "\tMenu";
+    cout << "1.gerar output padrão";
+    cout << "2.gerar output com NOPs";
+    cout << "3.";
+    cout << "0.sair";
+    char opc;
+    cout << "Escolha uma opcao: ";
+    cin >> opc;
+    switch (opc)
+    {
+    case '1':
+        return gerarOutput(extrairInstInfos(inputPath));
+    case '2':
+        return gerarOutput(resolucaoNop(extrairInstInfos(inputPath)));
+    case '3':
+        break;
+    default:
+        cout << "Opcao inválida. Escholha outra";
+        break;
+    }
+    return false;
+}

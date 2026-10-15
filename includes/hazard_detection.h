@@ -3,7 +3,7 @@
 
 #include "global.h"
 
-std::vector<struct Instruction> resolucaoNop(std::vector<std::vector<struct Instruction>> program);
+std::vector<Instruction> resolucaoNop(std::vector<Instruction> program);
 
 
 

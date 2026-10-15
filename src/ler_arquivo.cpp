@@ -4,15 +4,14 @@
 #include "ler_arquivo.h"
 #include "utils.h"
 
-std::vector<std::vector<std::string>> linhasLidas(std::string path) {
+std::vector<std::string> linhasLidas(std::string path) {
     std::ifstream arquivo(path);
 
     if(!arquivo) return {};
 
     std::string linha;
-    std::vector<std::vector<std::string>> instrucoes;
+    std::vector<std::string> instrucoes;
 
-    int pc = 0;
     while (std::getline(arquivo, linha))
     {   
         int i = 0;
@@ -31,10 +30,7 @@ std::vector<std::vector<std::string>> linhasLidas(std::string path) {
         }
         linha = formatadorInst(linha);
 
-        if (!linha.empty()) { 
-            instrucoes.push_back({std::format("{:#x}", pc), linha});
-            pc += 4;
-        }    
+        if (!linha.empty()) instrucoes.push_back(linha);   
     }
 
     arquivo.close();

@@ -7,10 +7,6 @@
 #include <vector>
 #include <map>
 
-typedef struct Instruction Instruction;
-
-Instruction nop(); 
-
 typedef struct Instruction {
     std::string bin;
     std::string formato;
@@ -23,6 +19,8 @@ typedef struct Instruction {
     std::string funct7;
     std::string assembly;
 } Instruction;
+
+Instruction nop(); 
 
 /*
 Para fazer a detecção de mnemonicos vamos usar o map para organizar todos eles.

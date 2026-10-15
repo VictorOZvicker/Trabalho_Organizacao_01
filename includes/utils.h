@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <cmath>
+#include "global.h"
 
 void contarTipoInst(std::string instTipo, float *contagem);
 std::vector<std::string> geradorEstatistica(float *contagem, float *cpi, int totalInstrucoes);
@@ -15,7 +16,7 @@ std::string conversorHexBin(std::string hex);
 int hexToInt(std::string hex);
 
 
-bool gerarOutput(std::string inputPath);
+bool menu(std::string inputPath);
 
 
 

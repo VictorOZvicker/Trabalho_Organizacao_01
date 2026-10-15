@@ -3,13 +3,13 @@
 using namespace std;
 
 
-int hazardDetection(vector<struct Instruction> program, int currInst, int psize);
+int hazardDetection(vector<Instruction> program, int currInst, int psize);
 
-vector<struct Instruction> resolucaoNop(vector<struct Instruction> program) {
+vector<Instruction> resolucaoNop(vector<Instruction> program) {
 
     int psize = program.size();
 
-    vector<struct Instruction> newOrder;
+    vector<Instruction> newOrder;
 
     for(int pc=0; pc < psize; pc++){
         if(program.at(pc).rd == "zero") {continue;}
@@ -25,7 +25,7 @@ vector<struct Instruction> resolucaoNop(vector<struct Instruction> program) {
     return newOrder;
 }
 
-int hazardDetection(vector<struct Instruction> program, int currInst, int psize) {
+int hazardDetection(vector<Instruction> program, int currInst, int psize) {
     
     if(program.at(currInst).formato == "B" || program.at(currInst).formato == "J") return 1;
 
@@ -36,5 +36,5 @@ int hazardDetection(vector<struct Instruction> program, int currInst, int psize)
             return i;
     }
 
-    return 0;
+    return 3;
 }

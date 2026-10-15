@@ -11,7 +11,7 @@ int main()
     cout << "Digite o nome do arquivo (com extensao)." << endl;
     cin >> path;
 
-    if(!gerarOutput(path)) return 0;
+    if(!menu(path)) return 0;
     
     cout << "Arquivo de saida gerado com sucesso. (output.txt)";
 
