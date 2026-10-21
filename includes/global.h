@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 
+
 typedef struct Instruction {
     std::string bin;
     std::string formato;
@@ -19,6 +20,19 @@ typedef struct Instruction {
     std::string funct7;
     std::string assembly;
 } Instruction;
+
+inline Instruction NOP = {
+    "00000000000000000000000000010011",
+    "R",
+    "nop",
+    "zero",
+    "zero",
+    "zero",
+    "",
+    "000",
+    "0010011",
+    "\nAssembly: nop", 
+};
 
 typedef struct No {
     Instruction* inst;

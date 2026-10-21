@@ -22,8 +22,6 @@ void hazardDetection(No* atual) {
     if (atual->proximo == NULL) return;
     hazardDetection(atual->proximo);
 
-    if (atual->inst->formato == "S") return;
-
     No* inst1 = atual->proximo;
     No* inst2 = NULL;
     if (inst1->proximo != NULL) inst2 = inst1->proximo;
@@ -34,11 +32,11 @@ void hazardDetection(No* atual) {
             atual->nivelHazard += 1;
         else
             atual->nivelHazard += 2;
+    }
 
-        if (inst2 != NULL) {
-             if (inst2->inst->rs1 == atual->inst->rd || inst2->inst->rs2 == atual->inst->rd)
-                atual->nivelHazard++;
-        }
+    if (inst2 != NULL) {
+        if (inst2->inst->rs1 == atual->inst->rd || inst2->inst->rs2 == atual->inst->rd)
+            atual->nivelHazard++;
     }
 }
 
@@ -47,16 +45,11 @@ void nopInsertion(ListaInstrucoes* lista) {
 
     while (atual != NULL)
     {   
-        if (atual->nivelHazard == 1){   
-            Instruction* nopInstruction = new Instruction(nop());  
-            inserirDepois(lista, atual, nopInstruction);
-        } 
-
+        if (atual->nivelHazard == 1) inserirDepois(lista, atual, &NOP);
+            
         if (atual->nivelHazard >= 2) {
-            Instruction* nopInstruction1 = new Instruction(nop());
-            Instruction* nopInstruction2 = new Instruction(nop()); 
-            inserirDepois(lista, atual, nopInstruction1);
-            inserirDepois(lista, atual, nopInstruction2);
+            inserirDepois(lista, atual, &NOP);
+            inserirDepois(lista, atual, &NOP);
         }    
         
         atual = atual->proximo;
