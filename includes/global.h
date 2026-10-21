@@ -20,6 +20,27 @@ typedef struct Instruction {
     std::string assembly;
 } Instruction;
 
+typedef struct No {
+    Instruction* inst;
+    No* proximo;
+    No* anterior;
+    int nivelHazard;
+
+} No;
+
+typedef struct ListaInstrucoes {
+    No* inicio;
+    No* fim;
+    int tamanho;
+} ListaInstrucoes;
+
+
+
+ListaInstrucoes* criarLista();
+void inserirFim(ListaInstrucoes* lista, Instruction *inst);
+bool inserirDepois(ListaInstrucoes *lista, No* noAtual, Instruction* inst);
+void imprimirLista(ListaInstrucoes* lista);
+
 Instruction nop(); 
 
 /*

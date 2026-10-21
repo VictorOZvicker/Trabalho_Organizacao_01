@@ -156,11 +156,11 @@ bool gerarOutput(vector<Instruction> insts){
 
 bool menu(string inputPath) {
 
-    cout << "\tMenu";
-    cout << "1.gerar output padrão";
-    cout << "2.gerar output com NOPs";
-    cout << "3.";
-    cout << "0.sair";
+    cout << "\tMenu" << endl;
+    cout << "1.gerar output padrão" << endl;
+    cout << "2.gerar output com NOPs" << endl;
+    cout << "3." << endl;
+    cout << "0.sair" << endl;
     char opc;
     cout << "Escolha uma opcao: ";
     cin >> opc;

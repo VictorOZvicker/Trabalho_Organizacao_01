@@ -2,39 +2,63 @@
 
 using namespace std;
 
+void hazardDetection(No* atual);
+void nopInsertion(ListaInstrucoes* lista);
 
-int hazardDetection(vector<Instruction> program, int currInst, int psize);
+vector<Instruction> resolucaoNop(std::vector<Instruction> program) {
+    ListaInstrucoes* lista = criarLista();
 
-vector<Instruction> resolucaoNop(vector<Instruction> program) {
+    for (int i = 0; i < program.size(); i++)
+        inserirFim(lista, &program[i]);
 
-    int psize = program.size();
-
-    vector<Instruction> newOrder;
-
-    for(int pc=0; pc < psize; pc++){
-        if(program.at(pc).rd == "zero") {continue;}
-        
-        newOrder.push_back(program.at(pc));
-
-        for(int e = 3 - hazardDetection(program, pc, psize); e > 0; e--){ 
-            newOrder.push_back(nop());
-        }
-
-    }
+    hazardDetection(lista->inicio);
+    nopInsertion(lista);
+    imprimirLista(lista);
     
-    return newOrder;
+    return program;
 }
 
-int hazardDetection(vector<Instruction> program, int currInst, int psize) {
-    
-    if(program.at(currInst).formato == "B" || program.at(currInst).formato == "J") return 1;
+void hazardDetection(No* atual) {
+    if (atual->proximo == NULL) return;
+    hazardDetection(atual->proximo);
 
-    for(int i=1; i < 3; i++) {
-        if(currInst + i >= psize) break;
+    if (atual->inst->formato == "S") return;
 
-        if(program.at(currInst + i).rs1 == program.at(currInst).rd || program.at(currInst + i).rs2 == program.at(currInst).rd) 
-            return i;
+    No* inst1 = atual->proximo;
+    No* inst2 = NULL;
+    if (inst1->proximo != NULL) inst2 = inst1->proximo;
+       
+    if (inst1->inst->rs1 == atual->inst->rd || inst1->inst->rs2 == atual->inst->rd)
+    {   
+        if (atual->inst->formato == "B")
+            atual->nivelHazard += 1;
+        else
+            atual->nivelHazard += 2;
+
+        if (inst2 != NULL) {
+             if (inst2->inst->rs1 == atual->inst->rd || inst2->inst->rs2 == atual->inst->rd)
+                atual->nivelHazard++;
+        }
     }
+}
 
-    return 3;
+void nopInsertion(ListaInstrucoes* lista) {
+    No* atual = lista->inicio;
+
+    while (atual != NULL)
+    {   
+        if (atual->nivelHazard == 1){   
+            Instruction* nopInstruction = new Instruction(nop());  
+            inserirDepois(lista, atual, nopInstruction);
+        } 
+
+        if (atual->nivelHazard >= 2) {
+            Instruction* nopInstruction1 = new Instruction(nop());
+            Instruction* nopInstruction2 = new Instruction(nop()); 
+            inserirDepois(lista, atual, nopInstruction1);
+            inserirDepois(lista, atual, nopInstruction2);
+        }    
+        
+        atual = atual->proximo;
+    }
 }

@@ -1,64 +1,34 @@
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
-I lw t0 a0  0 010  
-Assembly: lw t0, a0, 0 
-PC = 0 00000000000001010010001010000011
+R add t0 s1 s2 0 000 0000000 
+Assembly: add t0, s1, s2 
+PC = 0 00000001001001001000001010110011
 
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
-R nop zero zero zero  000 0010011 
-Assembly: nop 
-PC = 4 00000000000000000000000000010011
+R sub t1 t0 s3 0 000 0100000 
+Assembly: sub t1, t0, s3 
+PC = 4 01000001001100101000001100110011
 
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
-I lw t1 a0  4 010  
-Assembly: lw t1, a0, 4 
-PC = 8 00000000010001010010001100000011
+R and t2 t0 s4 0 111 0000000 
+Assembly: and t2, t0, s4 
+PC = 8 00000001010000101111001110110011
 
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
-R nop zero zero zero  000 0010011 
-Assembly: nop 
-PC = 12 00000000000000000000000000010011
+R or t3 t1 t0 0 110 0000000 
+Assembly: or t3, t1, t0 
+PC = 12 00000000010100110110111000110011
 
 tipo mnemonico rd rs1 rs2 imm funct3 funct7
-R nop zero zero zero  000 0010011 
-Assembly: nop 
-PC = 16 00000000000000000000000000010011
-
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-R add t2 t0 t1 0 000 0000000 
-Assembly: add t2, t0, t1 
-PC = 20 00000000011000101000001110110011
-
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-R nop zero zero zero  000 0010011 
-Assembly: nop 
-PC = 24 00000000000000000000000000010011
-
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-I addi t0 zero  1 000  
-Assembly: addi t0, zero, 1 
-PC = 28 00000000000100000000001010010011
-
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-R nop zero zero zero  000 0010011 
-Assembly: nop 
-PC = 32 00000000000000000000000000010011
-
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-R nop zero zero zero  000 0010011 
-Assembly: nop 
-PC = 36 00000000000000000000000000010011
-
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-R sub t3 t2 t0 0 000 0100000 
-Assembly: sub t3, t2, t0 
-PC = 40 01000000010100111000111000110011
+S sw  s0 t3 0 010  
+Assembly: sw s0, t3, 0 
+PC = 16 00000001110001000010000000100011
 
 
-Numero inst. Tipo R: 8 Percentual: 72.72727% 
-Numero inst. Tipo I: 3 Percentual: 27.272728% 
-Numero inst. Tipo S: 0 Percentual: 0% 
+Numero inst. Tipo R: 4 Percentual: 80% 
+Numero inst. Tipo I: 0 Percentual: 0% 
+Numero inst. Tipo S: 1 Percentual: 20% 
 Numero inst. Tipo B: 0 Percentual: 0% 
 Numero inst. Tipo U: 0 Percentual: 0% 
 Numero inst. Tipo J: 0 Percentual: 0% 
-Contagem total de instrucoes: 11
-CPI medio do programa: 3.727273
+Contagem total de instrucoes: 5
+CPI medio do programa: 3.4
