@@ -6,5 +6,4 @@
 std::vector<Instruction> resolucaoNop(std::vector<Instruction> program);
 
 
-
 #endif
