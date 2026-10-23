@@ -28,11 +28,14 @@ No *_criarNo(Instruction *inst) {
     return no;
 }
 
-ListaInstrucoes* criarLista() {
+ListaInstrucoes* criarLista(std::vector<Instruction> program) {
     ListaInstrucoes *lista = (ListaInstrucoes*)calloc(1, sizeof(ListaInstrucoes));
     lista->inicio          = NULL;
     lista->fim             = NULL;
     lista->tamanho         = 0;
+
+    for (int i = 0; i < program.size(); i++)
+        inserirFim(lista, &program[i]);
 
     return lista;
 }

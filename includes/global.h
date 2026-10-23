@@ -50,7 +50,7 @@ typedef struct ListaInstrucoes {
 
 
 
-ListaInstrucoes* criarLista();
+ListaInstrucoes* criarLista(std::vector<Instruction> program);
 void inserirFim(ListaInstrucoes* lista, Instruction *inst);
 bool inserirDepois(ListaInstrucoes *lista, No* noAtual, Instruction* inst);
 std::string imprimirLista(ListaInstrucoes* lista);

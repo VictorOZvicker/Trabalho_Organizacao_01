@@ -5,16 +5,21 @@ using namespace std;
 void hazardDetection(ListaInstrucoes* lista, No* atual);
 void nopInsertion(ListaInstrucoes* lista);
 
-string resolucaoNop(std::vector<Instruction> program) {
-    ListaInstrucoes* lista = criarLista();
 
-    for (int i = 0; i < program.size(); i++)
-        inserirFim(lista, &program[i]);
+string resolucaoNop(std::vector<Instruction> program) {
+    ListaInstrucoes* lista = criarLista(program);
 
     hazardDetection(lista, lista->inicio);
     nopInsertion(lista);
     
     return imprimirLista(lista);
+}
+
+string resolucaoReordenacao(std::vector<Instruction> program) {
+    ListaInstrucoes* lista = criarLista(program);
+
+    hazardDetection(lista, lista->inicio);
+
 }
 
 void hazardDetection(ListaInstrucoes* lista, No* atual) {
@@ -57,4 +62,22 @@ void nopInsertion(ListaInstrucoes* lista) {
         
         atual = atual->proximo;
     }
+}
+
+void iniciaReordenacao() {
+    
+    // buscar hazard
+        // Buscar Candidato -> não gera hazard pra frente, não gera hazard se for realocado
+            // Reordenar -> tira instrução apta e joga pra frenta da instrução com hazard.
+        // NOP
+
+    
+}
+
+void recalculoEnderecoSalto() {
+    // Andar pra tras da onde a instrução foi inserida e verificar se possui um endereço positivo
+    // Andar para frente e vrificar se possui instrução com endereço negativo
+
+    // na frente com endereço positivo -> subtrai
+    //
 }
