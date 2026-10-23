@@ -74,14 +74,17 @@ bool inserirDepois(ListaInstrucoes *lista, No* noAtual, Instruction* inst) {
 }
 
 
-void imprimirLista(ListaInstrucoes* lista) {
+std::string imprimirLista(ListaInstrucoes* lista) {
     No* noAtual = lista->inicio;
 
+    std::string output;
     while (noAtual != NULL) 
     {   
 
-        std::cout << noAtual->inst->assembly << "  nivel hazard: " << noAtual->nivelHazard << std::endl;
+        output += noAtual->inst->assembly + "  nivel hazard: " + std::to_string(noAtual->nivelHazard) + "\n";
 
         noAtual = noAtual->proximo;
     }
+
+    return output;
 }

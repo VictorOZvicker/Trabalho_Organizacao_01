@@ -53,7 +53,7 @@ typedef struct ListaInstrucoes {
 ListaInstrucoes* criarLista();
 void inserirFim(ListaInstrucoes* lista, Instruction *inst);
 bool inserirDepois(ListaInstrucoes *lista, No* noAtual, Instruction* inst);
-void imprimirLista(ListaInstrucoes* lista);
+std::string imprimirLista(ListaInstrucoes* lista);
 
 Instruction nop(); 
 

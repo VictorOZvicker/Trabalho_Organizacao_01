@@ -104,50 +104,55 @@ vector<Instruction> extrairInstInfos(string path){
     return instInfos;
 }
 
-bool gerarOutput(vector<Instruction> insts){
+string outputString(vector<Instruction> insts){
+
+    float* contagem = (float*)calloc(6, sizeof(float));
+    float cpi[6] = { 4.0, 3.0, 1.0, 5.0, 2.0, 3.0 };
+
+    string output;
+    for (int i = 0; i <  insts.size(); i++) {
+
+        output += "tipo mnemonico rd rs1 rs2 imm funct3 funct7\n";
+        output += insts[i].formato   + " ";
+        output += insts[i].mnemonico + " ";
+        output += insts[i].rd        + " ";
+        output += insts[i].rs1       + " ";
+        output += insts[i].rs2       + " ";
+        output += insts[i].imm       + " ";
+        output += insts[i].funct3    + " ";
+        output += insts[i].funct7    + " ";
+        output += insts[i].assembly  + "\n";
+
+        output += "PC = ";
+
+        output += to_string(i*4) += " ";
+
+        output += insts[i].bin += "\n";
+
+        contarTipoInst(insts[i].formato, contagem);
+
+        output += "\n";
+    }
+
+    int totalInstrucoes = insts.size();
+
+    vector<string> estatisticas = geradorEstatistica(contagem, cpi, totalInstrucoes);
+    output += "\n";
+    for(int i=0; i < estatisticas.size(); i++){
+        output += estatisticas[i];
+    }
+    return output;
+}
+
+
+bool gerarOutput(string text){
 
     ofstream output("output.txt");
     if(!output) {
         cerr << "Erro ao escrever o output." << endl;
         return false;
     }
-
-    float* contagem = (float*)calloc(6, sizeof(float));
-    float cpi[6] = { 4.0, 3.0, 1.0, 5.0, 2.0, 3.0 };
-
-    for (int i = 0; i <  insts.size(); i++) {
-
-        output << "tipo mnemonico rd rs1 rs2 imm funct3 funct7" << endl;
-        output << insts[i].formato   << " ";
-        output << insts[i].mnemonico << " ";
-        output << insts[i].rd        << " ";
-        output << insts[i].rs1       << " ";
-        output << insts[i].rs2       << " ";
-        output << insts[i].imm       << " ";
-        output << insts[i].funct3    << " ";
-        output << insts[i].funct7    << " ";
-        output << insts[i].assembly  << " ";
-
-        output << endl;
-
-        output << "PC = ";
-
-        output << i*4 << " ";
-
-        output << insts[i].bin << endl;
-
-        contarTipoInst(insts[i].formato, contagem);
-
-        output << endl;
-    }
-
-    int totalInstrucoes = insts.size();
-
-    vector<string> estatisticas = geradorEstatistica(contagem, cpi, totalInstrucoes);
-    output << endl;
-    for(int i=0; i < estatisticas.size(); i++){
-        output << estatisticas[i];
-    }
+    output << text;
 
     output.close();
 
@@ -167,7 +172,7 @@ bool menu(string inputPath) {
     switch (opc)
     {
     case '1':
-        return gerarOutput(extrairInstInfos(inputPath));
+        return gerarOutput(outputString(extrairInstInfos(inputPath)));
     case '2':
         return gerarOutput(resolucaoNop(extrairInstInfos(inputPath)));
     case '3':

@@ -3,7 +3,7 @@
 
 #include "global.h"
 
-std::vector<Instruction> resolucaoNop(std::vector<Instruction> program);
+std::string resolucaoNop(std::vector<Instruction> program);
 
 
 #endif

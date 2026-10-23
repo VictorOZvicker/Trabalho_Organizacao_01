@@ -5,7 +5,7 @@ using namespace std;
 void hazardDetection(ListaInstrucoes* lista, No* atual);
 void nopInsertion(ListaInstrucoes* lista);
 
-vector<Instruction> resolucaoNop(std::vector<Instruction> program) {
+string resolucaoNop(std::vector<Instruction> program) {
     ListaInstrucoes* lista = criarLista();
 
     for (int i = 0; i < program.size(); i++)
@@ -13,9 +13,8 @@ vector<Instruction> resolucaoNop(std::vector<Instruction> program) {
 
     hazardDetection(lista, lista->inicio);
     nopInsertion(lista);
-    imprimirLista(lista);
     
-    return program;
+    return imprimirLista(lista);
 }
 
 void hazardDetection(ListaInstrucoes* lista, No* atual) {
@@ -54,7 +53,7 @@ void nopInsertion(ListaInstrucoes* lista) {
 
     while (atual != NULL)
     {   
-        if(atual->nivelHazard > 0) for(int i = 3 - atual->nivelHazard; i>0; i--) inserirDepois(lista, atual, &NOP);
+        for(int i = 3 - atual->nivelHazard; i<3&&i>0; i--) inserirDepois(lista, atual, &NOP);
         
         atual = atual->proximo;
     }

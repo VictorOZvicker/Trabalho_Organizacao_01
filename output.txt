@@ -1,34 +1,20 @@
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-R add t0 s1 s2 0 000 0000000 
-Assembly: add t0, s1, s2 
-PC = 0 00000001001001001000001010110011
 
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-R sub t1 t0 s3 0 000 0100000 
-Assembly: sub t1, t0, s3 
-PC = 4 01000001001100101000001100110011
+Assembly: add t0, s1, s2  nivel hazard: 1
 
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-R and t2 t0 s4 0 111 0000000 
-Assembly: and t2, t0, s4 
-PC = 8 00000001010000101111001110110011
+Assembly: nop  nivel hazard: 0
 
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-R or t3 t1 t0 0 110 0000000 
-Assembly: or t3, t1, t0 
-PC = 12 00000000010100110110111000110011
+Assembly: nop  nivel hazard: 0
 
-tipo mnemonico rd rs1 rs2 imm funct3 funct7
-S sw  s0 t3 0 010  
-Assembly: sw s0, t3, 0 
-PC = 16 00000001110001000010000000100011
+Assembly: sub t1, t0, s3  nivel hazard: 2
 
+Assembly: nop  nivel hazard: 0
 
-Numero inst. Tipo R: 4 Percentual: 80% 
-Numero inst. Tipo I: 0 Percentual: 0% 
-Numero inst. Tipo S: 1 Percentual: 20% 
-Numero inst. Tipo B: 0 Percentual: 0% 
-Numero inst. Tipo U: 0 Percentual: 0% 
-Numero inst. Tipo J: 0 Percentual: 0% 
-Contagem total de instrucoes: 5
-CPI medio do programa: 3.4
+Assembly: and t2, t0, s4  nivel hazard: 0
+
+Assembly: or t3, t1, t0  nivel hazard: 1
+
+Assembly: nop  nivel hazard: 0
+
+Assembly: nop  nivel hazard: 0
+
+Assembly: sw s0, t3, 0  nivel hazard: 0
