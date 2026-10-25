@@ -17,33 +17,22 @@ Instruction nop() {
     return nop;
 }
 
-No *_criarNo(Instruction *inst) {
-    No *no = (No*)calloc(1, sizeof(No));
-
-    no->inst        = inst;
-    no->anterior    = NULL;
-    no->proximo     = NULL;
-    no->nivelHazard = 0;
-
-    return no;
+No *_criarNo(const Instruction& inst) {
+    return new No{inst, nullptr, nullptr, 0};
 }
 
-ListaInstrucoes* criarLista(std::vector<Instruction> program) {
-    ListaInstrucoes *lista = (ListaInstrucoes*)calloc(1, sizeof(ListaInstrucoes));
-    lista->inicio          = NULL;
-    lista->fim             = NULL;
-    lista->tamanho         = 0;
+ListaInstrucoes* criarLista(const std::vector<Instruction>& program) {
+    ListaInstrucoes *lista = new ListaInstrucoes{nullptr, nullptr, 0};
 
-    for (int i = 0; i < program.size(); i++)
-        inserirFim(lista, &program[i]);
+    for (const Instruction& inst : program)
+        inserirFim(lista, inst);
 
     return lista;
 }
 
 
-void inserirFim(ListaInstrucoes* lista, Instruction* inst) {
+void inserirFim(ListaInstrucoes* lista, const Instruction& inst) {
     No *novoNo = _criarNo(inst);
-    if (novoNo == NULL) return;
 
     if (lista->inicio == NULL) {
         lista->inicio = novoNo;
@@ -57,7 +46,7 @@ void inserirFim(ListaInstrucoes* lista, Instruction* inst) {
     lista->tamanho++;
 }
 
-bool inserirDepois(ListaInstrucoes *lista, No* noAtual, Instruction* inst) {
+bool inserirDepois(ListaInstrucoes *lista, No* noAtual, const Instruction& inst) {
     if (lista == NULL) return false;
     if (noAtual == NULL) return false;
 
@@ -66,6 +55,8 @@ bool inserirDepois(ListaInstrucoes *lista, No* noAtual, Instruction* inst) {
     if (noAtual->proximo != NULL) {
         novoNo->proximo = noAtual->proximo;
         noAtual->proximo->anterior = novoNo;
+    } else {
+        lista->fim = novoNo;
     }
         
     novoNo->anterior = noAtual;
@@ -76,15 +67,30 @@ bool inserirDepois(ListaInstrucoes *lista, No* noAtual, Instruction* inst) {
     return true;
 }
 
+void destruirLista(ListaInstrucoes* lista) {
+    if (lista == NULL) return;
+
+    No* noAtual = lista->inicio;
+    while (noAtual != NULL) {
+        No* proximo = noAtual->proximo;
+        delete noAtual;
+        noAtual = proximo;
+    }
+
+    delete lista;
+}
+
 
 std::string imprimirLista(ListaInstrucoes* lista) {
+    if (lista == NULL) return "";
+
     No* noAtual = lista->inicio;
 
     std::string output;
     while (noAtual != NULL) 
     {   
 
-        output += noAtual->inst->assembly + "  nivel hazard: " + std::to_string(noAtual->nivelHazard) + "\n";
+        output += noAtual->inst.assembly + "  nivel hazard: " + std::to_string(noAtual->nivelHazard) + "\n";
 
         noAtual = noAtual->proximo;
     }

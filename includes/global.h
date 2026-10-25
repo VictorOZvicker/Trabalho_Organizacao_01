@@ -35,7 +35,7 @@ inline Instruction NOP = {
 };
 
 typedef struct No {
-    Instruction* inst;
+    Instruction inst;
     No* proximo;
     No* anterior;
     int nivelHazard;
@@ -50,9 +50,10 @@ typedef struct ListaInstrucoes {
 
 
 
-ListaInstrucoes* criarLista(std::vector<Instruction> program);
-void inserirFim(ListaInstrucoes* lista, Instruction *inst);
-bool inserirDepois(ListaInstrucoes *lista, No* noAtual, Instruction* inst);
+ListaInstrucoes* criarLista(const std::vector<Instruction>& program);
+void inserirFim(ListaInstrucoes* lista, const Instruction& inst);
+bool inserirDepois(ListaInstrucoes *lista, No* noAtual, const Instruction& inst);
+void destruirLista(ListaInstrucoes* lista);
 std::string imprimirLista(ListaInstrucoes* lista);
 
 Instruction nop(); 

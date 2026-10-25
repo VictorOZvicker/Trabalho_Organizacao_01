@@ -5,6 +5,7 @@ CXXFLAGS = -std=c++20
 TARGET = main.exe
 SRCS = main.cpp $(wildcard src/*.cpp)
 OBJS = $(SRCS:.cpp=.o)
+HEADERS = $(wildcard includes/*.h)
 
 ifeq ($(OS),Windows_NT)
     CLEAN_CMD = del /Q /F
@@ -22,7 +23,7 @@ $(TARGET): $(OBJS)
 	$(CXX) $(OBJS) -o $@
 	$(MAKE) clean
 
-%.o: %.cpp
+%.o: %.cpp $(HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 clean:
