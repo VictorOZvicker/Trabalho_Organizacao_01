@@ -31,11 +31,10 @@ string resolucaoReordenacao(const std::vector<Instruction>& program) {
 }
 
 int detectHazardAhead(No* atual, string rd = "", int hazardAhead = 1){
-    if(atual == NULL) return hazardAhead;
-    if(atual->proximo == NULL) return 0;
+    if(atual == NULL || hazardAhead > 2) return 0;
     if((atual->inst.rs1 == rd || atual->inst.rs2 == rd) && (rd != "" && rd != "zero")) return hazardAhead;
     
-    return detectHazardAhead(atual->proximo, rd, hazardAhead+1);
+    return detectHazardAhead(atual->proximo, rd, ++hazardAhead);
 }
 
 void hazardDetection(No* atual) {
@@ -63,7 +62,7 @@ void fullNopInsertion(ListaInstrucoes* lista) {
 
 No* acharCandidato(No* atual, string rd){
 
-    if(atual->proximo == NULL) return NULL;
+    if(atual == NULL) return NULL;
 
     if(atual->nivelHazard <= 0 && detectHazardAhead(atual->proximo, rd) <= 0) return atual;
 
@@ -71,30 +70,26 @@ No* acharCandidato(No* atual, string rd){
 }   
 
 void reordenar(ListaInstrucoes* lista, No* atual, No* candidato){
+    
     desvincularNo(lista, candidato);
     inserirDepois(lista, atual, candidato->inst);
-    delete candidato;
 }
 
 void iniciaReordenacao(ListaInstrucoes* lista) {
-    
-    // buscar hazard
-        // Buscar Candidato -> não gera hazard pra frente, não gera hazard se for realocado
-            // Reordenar -> tira instrução apta e joga pra frenta da instrução com hazard.
-        // NOP
 
-    No* atual = lista->inicio;
+    No* atual = lista->fim;
 
-    while(atual->proximo != NULL){
+    while(atual != NULL){
+        cout << "Entrou aqui, vendo a inst: " << atual->inst.assembly << endl;
         if(atual->nivelHazard > 0){
-            No* candidato = acharCandidato(atual, atual->inst.rd);
-            if(candidato){
+            No* candidato = acharCandidato(atual->proximo, atual->inst.rd);
+            if(candidato != NULL){
                 reordenar(lista, atual, candidato);
             } else {
                 nopInsertion(lista, atual);
             }
         }
-        atual = atual->proximo;
+        atual = atual->anterior;
     }
 
 }
