@@ -28,7 +28,7 @@ string resolucaoReordenacao(const std::vector<Instruction>& program) {
 
 int detectHazardAhead(No* atual, int ahead, int hazardAhead = 0, string rd = ""){
     if(atual->proximo == NULL) return hazardAhead;
-    if((atual->inst.rs1 == rd || atual->inst.rs2 == rd) && (rd != "" || rd != "zero")) return hazardAhead;
+    if((atual->inst.rs1 == rd || atual->inst.rs2 == rd) && (rd != "" && rd != "zero")) return hazardAhead;
     
     return detectHazardAhead(atual->proximo, ahead-1, hazardAhead+1, rd);
 }

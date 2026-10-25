@@ -1,18 +1,17 @@
+nop  nivel hazard: 4
 
-Assembly: lw t0, a0, 0  nivel hazard: 2
-
-Assembly: lw t1, a0, 4  nivel hazard: 1
-
-Assembly: nop  nivel hazard: 0
-
-Assembly: nop  nivel hazard: 0
-
-Assembly: add t2, t0, t1  nivel hazard: 2
-
-Assembly: addi t0, zero, 1  nivel hazard: 1
+Assembly: add t2, zero, t3  nivel hazard: 1
 
 Assembly: nop  nivel hazard: 0
 
 Assembly: nop  nivel hazard: 0
 
-Assembly: sub t3, t2, t0  nivel hazard: 0
+Assembly: sw sp, t2, 8  nivel hazard: 2
+
+Assembly: lw t4, sp, 8  nivel hazard: 1
+
+Assembly: nop  nivel hazard: 0
+
+Assembly: nop  nivel hazard: 0
+
+Assembly: addi t5, t4, 1  nivel hazard: 0
