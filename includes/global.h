@@ -52,7 +52,8 @@ typedef struct ListaInstrucoes {
 
 ListaInstrucoes* criarLista(const std::vector<Instruction>& program);
 void inserirFim(ListaInstrucoes* lista, const Instruction& inst);
-bool inserirDepois(ListaInstrucoes *lista, No* noAtual, const Instruction& inst);
+bool inserirDepois(ListaInstrucoes* lista, No* noAtual, const Instruction& inst);
+bool desvincularNo(ListaInstrucoes* lista, No* no);
 void destruirLista(ListaInstrucoes* lista);
 std::string imprimirLista(ListaInstrucoes* lista);
 

@@ -164,7 +164,7 @@ bool menu(string inputPath) {
     cout << "\tMenu" << endl;
     cout << "1.gerar output padrão" << endl;
     cout << "2.gerar output com NOPs" << endl;
-    cout << "3." << endl;
+    cout << "3.gerar output com Reordenacao" << endl;
     cout << "0.sair" << endl;
     char opc;
     cout << "Escolha uma opcao: ";
@@ -176,7 +176,7 @@ bool menu(string inputPath) {
     case '2':
         return gerarOutput(resolucaoNop(extrairInstInfos(inputPath)));
     case '3':
-        break;
+        return gerarOutput(resolucaoReordenacao(extrairInstInfos(inputPath)));
     default:
         cout << "Opcao inválida. Escholha outra";
         break;

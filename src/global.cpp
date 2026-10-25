@@ -67,6 +67,26 @@ bool inserirDepois(ListaInstrucoes *lista, No* noAtual, const Instruction& inst)
     return true;
 }
 
+bool desvincularNo(ListaInstrucoes* lista, No* no){
+    if (lista == NULL) return false;
+
+    No* noAtual = lista->inicio;
+
+    while(noAtual != NULL){
+        if(noAtual != no){
+            noAtual = noAtual->proximo;
+            continue;
+        }
+        noAtual->anterior->proximo = noAtual->proximo;
+        noAtual->proximo->anterior = noAtual->anterior;
+        if(lista->inicio == noAtual) lista->inicio = noAtual->proximo;
+        if(lista->fim == noAtual) lista->fim = noAtual->anterior;
+        lista->tamanho--;
+        return true;
+    }
+    return false;
+}
+
 void destruirLista(ListaInstrucoes* lista) {
     if (lista == NULL) return;
 

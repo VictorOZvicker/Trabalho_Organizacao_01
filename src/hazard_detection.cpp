@@ -3,14 +3,14 @@
 using namespace std;
 
 void hazardDetection(No* atual);
-void nopInsertion(ListaInstrucoes* lista);
-
+void fullNopInsertion(ListaInstrucoes* lista);
+void iniciaReordenacao(ListaInstrucoes* lista);
 
 string resolucaoNop(const std::vector<Instruction> &program) {
     ListaInstrucoes* lista = criarLista(program);
 
     hazardDetection(lista->inicio);
-    nopInsertion(lista);
+    fullNopInsertion(lista);
 
     string output = imprimirLista(lista);
     destruirLista(lista);
@@ -22,45 +22,81 @@ string resolucaoReordenacao(const std::vector<Instruction>& program) {
 
     hazardDetection(lista->inicio);
 
+    iniciaReordenacao(lista);
+
+    string output = imprimirLista(lista);
     destruirLista(lista);
-    return "";
+    
+    return output;
 }
 
-int detectHazardAhead(No* atual, int ahead, int hazardAhead = 0, string rd = ""){
-    if(atual->proximo == NULL) return hazardAhead;
+int detectHazardAhead(No* atual, string rd = "", int hazardAhead = 1){
+    if(atual == NULL) return hazardAhead;
+    if(atual->proximo == NULL) return 0;
     if((atual->inst.rs1 == rd || atual->inst.rs2 == rd) && (rd != "" && rd != "zero")) return hazardAhead;
     
-    return detectHazardAhead(atual->proximo, ahead-1, hazardAhead+1, rd);
+    return detectHazardAhead(atual->proximo, rd, hazardAhead+1);
 }
 
 void hazardDetection(No* atual) {
     if (atual == NULL) return;
     if (atual->proximo == NULL) return;
 
-    atual->nivelHazard = detectHazardAhead(atual, 2, 0, atual->inst.rd);
+    atual->nivelHazard = detectHazardAhead(atual->proximo, atual->inst.rd);
 
     hazardDetection(atual->proximo);
 }
 
-void nopInsertion(ListaInstrucoes* lista) {
+void nopInsertion(ListaInstrucoes* lista, No* atual) {
+    for(int i = 3 - detectHazardAhead(atual->proximo, atual->inst.rd); i<3&&i>0; i--) inserirDepois(lista, atual, NOP);
+}
+
+void fullNopInsertion(ListaInstrucoes* lista) {
     No* atual = lista->fim;
 
     while (atual != NULL)
     {   
-        for(int i = 3 - detectHazardAhead(atual, 2, 0, atual->inst.rd); i<3&&i>0; i--) inserirDepois(lista, atual, NOP);
-        
+        nopInsertion(lista, atual);
         atual = atual->anterior;
     }
 }
 
-void iniciaReordenacao() {
+No* acharCandidato(No* atual, string rd){
+
+    if(atual->proximo == NULL) return NULL;
+
+    if(atual->nivelHazard <= 0 && detectHazardAhead(atual->proximo, rd) <= 0) return atual;
+
+    return acharCandidato(atual->proximo, rd);
+}   
+
+void reordenar(ListaInstrucoes* lista, No* atual, No* candidato){
+    desvincularNo(lista, candidato);
+    inserirDepois(lista, atual, candidato->inst);
+    delete candidato;
+}
+
+void iniciaReordenacao(ListaInstrucoes* lista) {
     
     // buscar hazard
         // Buscar Candidato -> não gera hazard pra frente, não gera hazard se for realocado
             // Reordenar -> tira instrução apta e joga pra frenta da instrução com hazard.
         // NOP
 
-    
+    No* atual = lista->inicio;
+
+    while(atual->proximo != NULL){
+        if(atual->nivelHazard > 0){
+            No* candidato = acharCandidato(atual, atual->inst.rd);
+            if(candidato){
+                reordenar(lista, atual, candidato);
+            } else {
+                nopInsertion(lista, atual);
+            }
+        }
+        atual = atual->proximo;
+    }
+
 }
 
 void recalculoEnderecoSalto() {
