@@ -77,10 +77,17 @@ bool desvincularNo(ListaInstrucoes* lista, No* no){
             noAtual = noAtual->proximo;
             continue;
         }
-        noAtual->anterior->proximo = noAtual->proximo;
-        noAtual->proximo->anterior = noAtual->anterior;
-        if(lista->inicio == noAtual) lista->inicio = noAtual->proximo;
-        if(lista->fim == noAtual) lista->fim = noAtual->anterior;
+        if(noAtual == lista->inicio){
+            noAtual->proximo->anterior = noAtual->anterior;
+            lista->inicio = noAtual->proximo;
+        } else if(noAtual == lista->fim){
+            noAtual->anterior->proximo = noAtual->proximo;
+            lista->fim = noAtual->anterior;
+        } else{
+            noAtual->proximo->anterior = noAtual->anterior;
+            noAtual->anterior->proximo = noAtual->proximo;
+        }
+        
         lista->tamanho--;
         return true;
     }

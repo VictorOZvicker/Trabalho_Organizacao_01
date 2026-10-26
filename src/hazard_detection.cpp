@@ -60,11 +60,13 @@ void fullNopInsertion(ListaInstrucoes* lista) {
     }
 }
 
+
 No* acharCandidato(No* atual, string rd){
 
     if(atual == NULL) return NULL;
 
-    if(atual->nivelHazard <= 0 && detectHazardAhead(atual->proximo, rd) <= 0) return atual;
+    if(atual->nivelHazard <= 0 && detectHazardAhead(atual, rd) <= 0 && atual->anterior->nivelHazard <= 0 && atual->anterior->anterior->nivelHazard <= 0) 
+        return atual;
 
     return acharCandidato(atual->proximo, rd);
 }   
@@ -80,17 +82,18 @@ void iniciaReordenacao(ListaInstrucoes* lista) {
     No* atual = lista->fim;
 
     while(atual != NULL){
-        cout << "Entrou aqui, vendo a inst: " << atual->inst.assembly << endl;
         if(atual->nivelHazard > 0){
-            No* candidato = acharCandidato(atual->proximo, atual->inst.rd);
+            No* comecoBusca = atual;
+            for(int i=3-atual->nivelHazard; i<3&&i>0; i--) comecoBusca = comecoBusca->proximo;
+            No* candidato = acharCandidato(comecoBusca, atual->inst.rd);
             if(candidato != NULL){
                 reordenar(lista, atual, candidato);
-            } else {
-                nopInsertion(lista, atual);
             }
         }
         atual = atual->anterior;
     }
+
+    fullNopInsertion(lista);
 
 }
 

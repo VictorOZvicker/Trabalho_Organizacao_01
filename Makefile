@@ -8,7 +8,7 @@ OBJS = $(SRCS:.cpp=.o)
 HEADERS = $(wildcard includes/*.h)
 
 ifeq ($(OS),Windows_NT)
-    CLEAN_CMD = del /Q /F
+    CLEAN_CMD = cls
     CLEAN_PATHS = main.o src\*.o
 else
     CLEAN_CMD = rm -f
