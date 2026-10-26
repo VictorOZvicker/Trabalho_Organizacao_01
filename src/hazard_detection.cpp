@@ -5,12 +5,14 @@ using namespace std;
 void hazardDetection(No* atual);
 void fullNopInsertion(ListaInstrucoes* lista);
 void iniciaReordenacao(ListaInstrucoes* lista);
+void recalculoEnderecoSalto(ListaInstrucoes* lista);
 
 string resolucaoNop(const std::vector<Instruction> &program) {
     ListaInstrucoes* lista = criarLista(program);
 
     hazardDetection(lista->inicio);
     fullNopInsertion(lista);
+    recalculoEnderecoSalto(lista);
 
     string output = imprimirLista(lista);
     destruirLista(lista);
@@ -23,6 +25,7 @@ string resolucaoReordenacao(const std::vector<Instruction>& program) {
     hazardDetection(lista->inicio);
 
     iniciaReordenacao(lista);
+    recalculoEnderecoSalto(lista);
 
     string output = imprimirLista(lista);
     destruirLista(lista);
@@ -98,10 +101,49 @@ void iniciaReordenacao(ListaInstrucoes* lista) {
 
 }
 
-void recalculoEnderecoSalto() {
-    // Andar pra tras da onde a instrução foi inserida e verificar se possui um endereço positivo
-    // Andar para frente e vrificar se possui instrução com endereço negativo
+void recalculoEnderecoSalto(ListaInstrucoes* lista) {
+    No* atual = lista->inicio;
+    while(atual)
+    {
+        if (atual->inst.formato == "B" || atual->inst.formato == "J")
+        {   
+            int i = 0, nopCount = 0;
+            int imm = stoi(atual->inst.imm);
 
-    // na frente com endereço positivo -> subtrai
-    //
+            if (imm < 0) 
+            {
+                int n = imm/(-4);
+                No* anterior = atual->anterior;
+                while (i < n)
+                {
+                    if (anterior->inst.mnemonico == "nop") nopCount--;
+                    else i++;
+                    
+                    anterior = anterior->anterior;
+                }
+            }
+            else if (imm > 0) 
+            {
+                int n = imm/4;
+                No* proximo = atual->proximo;
+                while (i < n)
+                {
+                    if (proximo->inst.mnemonico == "nop") nopCount++; 
+                    else i++; 
+                    
+                    proximo = proximo->proximo;
+                }
+            }
+
+            string newimm = to_string(imm + nopCount*4);
+
+            i = atual->inst.assembly.find_last_of(",");
+            atual->inst.assembly.erase(i);
+
+            atual->inst.imm = newimm;
+            atual->inst.assembly += format(", {}", newimm);
+        }
+
+        atual = atual->proximo;
+    }
 }
