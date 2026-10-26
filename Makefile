@@ -8,16 +8,19 @@ OBJS = $(SRCS:.cpp=.o)
 HEADERS = $(wildcard includes/*.h)
 
 ifeq ($(OS),Windows_NT)
-    CLEAN_CMD = cls
+    CLEAN_CMD = del /Q /F
     CLEAN_PATHS = main.o src\*.o
+    CLS_CMD = @cls
 else
     CLEAN_CMD = rm -f
     CLEAN_PATHS = main.o src/*.o
+    CLS_CMD = @clear
 endif
 
 .PHONY: all clean
 
 all: $(TARGET)
+	$(CLS_CMD)
 
 $(TARGET): $(OBJS)
 	$(CXX) $(OBJS) -o $@
