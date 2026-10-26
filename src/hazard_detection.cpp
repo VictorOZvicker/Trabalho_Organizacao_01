@@ -30,10 +30,11 @@ string resolucaoReordenacao(const std::vector<Instruction>& program) {
     return output;
 }
 
-int detectHazardAhead(No* atual, string rd = "", int hazardAhead = 1){
+int detectHazardAhead(No* atual, string rd = "", int hazardAhead = 1, string formato = "") {
     if(atual == NULL || hazardAhead > 2) return 0;
+    if (formato == "B" || formato == "J") return 2;
     if((atual->inst.rs1 == rd || atual->inst.rs2 == rd) && (rd != "" && rd != "zero")) return hazardAhead;
-    
+
     return detectHazardAhead(atual->proximo, rd, ++hazardAhead);
 }
 
@@ -47,7 +48,7 @@ void hazardDetection(No* atual) {
 }
 
 void nopInsertion(ListaInstrucoes* lista, No* atual) {
-    for(int i = 3 - detectHazardAhead(atual->proximo, atual->inst.rd); i<3&&i>0; i--) inserirDepois(lista, atual, NOP);
+    for(int i = 3 - detectHazardAhead(atual->proximo, atual->inst.rd, 1, atual->inst.formato); i<3&&i>0; i--) inserirDepois(lista, atual, NOP);
 }
 
 void fullNopInsertion(ListaInstrucoes* lista) {
