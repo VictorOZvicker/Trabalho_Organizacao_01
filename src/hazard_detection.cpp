@@ -65,39 +65,70 @@ void fullNopInsertion(ListaInstrucoes* lista) {
 }
 
 
-bool verificarIndependencia(No* comparador, string rd, string rs1, string rs2){
+/* bool verificarIndependencia(No* comparador, No* atual){
 
-    if(comparador == NULL || comparador->inst.mnemonico == "nop") return true;
+    if(comparador == NULL || comparador->inst.mnemonico == "nop") return false;
 
+    if(atual->inst.mnemonico == "lw" && comparador->inst.formato == "S") return true;
 
-    if(
-       comparador->inst.rs1 != rd || comparador->inst.rs2 != rd ||
-       comparador->inst.rd != rs1 || comparador->inst.rd != rs2) return false;
+    if((comparador->inst.rs1 == atual->inst.rd && atual->inst.rd != "") || (comparador->inst.rs2 == atual->inst.rd && atual->inst.rd != "" ) || (comparador->inst.rd == atual->inst.rs1 && atual->inst.rs1 != "") || (comparador->inst.rd == atual->inst.rs2 && atual->inst.rs2 != ""))
+    {
+        cout << comparador->inst.assembly << " -> comparador" << endl;
+        return false;
+    } 
 
     return true;
 }   
 
 
-bool instIndependente(No* comparador, string rd, string rs1, string rs2, int range) {
+bool instIndependente(No* comparador, No* atual, int range) {
     if (comparador == NULL || range < 0) return true;
 
-    return verificarIndependencia(comparador, rd, rs1, rs2) &&
-    instIndependente(comparador->anterior, rd, rs1, rs2, --range);
+    return verificarIndependencia(comparador, atual) &&
+    instIndependente(comparador->anterior, atual, --range);
+} */
+
+bool verificarIndependencia(No* atual, No* candidato) {
+    
+    while (candidato != atual)
+    {   
+        if(candidato == NULL || candidato->inst.mnemonico == "nop") return false;
+
+
+        else if((candidato->inst.rd != atual->inst.rs1) && (candidato->inst.rd != atual->inst.rs2)
+        && (candidato->inst.rs1 != atual->inst.rd ) && (candidato->inst.rs2 != atual->inst.rd))
+        {
+            cout << "(" << candidato->inst.assembly << " -> candidato" << endl;
+            return true;
+        } 
+
+        candidato = candidato->anterior;
+    }
+
+    return false;
+}
+
+bool instIndependente(No* atual, No* candidato, int range) {
+    //if (comparador == NULL || range < 0) return true;
+
+    return verificarIndependencia(atual, candidato);
 }
 
 No* acharCandidato(No* atual){
 
     int range = 0;
-
-    while (atual)
+    No* candidato = atual->proximo;
+    while (candidato)
     {
-        if (instIndependente(atual->anterior, atual->inst.rd, atual->inst.rs1, atual->inst.rs2, range++)) return atual;
-        atual = atual->proximo;
+        if (instIndependente(atual, candidato, range++)) {
+            return candidato;
+        } 
+        candidato = candidato->proximo;
     }
 
     return NULL;
-    
 }
+    
 
 void reordenar(ListaInstrucoes* lista, No* atual, No* candidato){
     
@@ -107,17 +138,18 @@ void reordenar(ListaInstrucoes* lista, No* atual, No* candidato){
 
 void iniciaReordenacao(ListaInstrucoes* lista) {
 
-    No* atual = lista->fim;
+    No* atual = lista->inicio;
 
     while(atual != NULL){
         if(atual->nivelHazard > 0){
             No* comecoBusca = atual->proximo;
-            No* candidato = acharCandidato(comecoBusca);
+            No* candidato   = acharCandidato(comecoBusca);
             if(candidato){
+                cout << atual->inst.assembly << " -> ATUAL" << endl << ")" << endl;
                 reordenar(lista, atual, candidato);
             }
         }
-        atual = atual->anterior;
+        atual = atual->proximo;
     }
 
     fullNopInsertion(lista);
