@@ -35,7 +35,7 @@ string resolucaoReordenacao(const std::vector<Instruction>& program) {
 
 int detectHazardAhead(No* atual, string rd = "", int hazardAhead = 1, string formato = "") {
     if(atual == NULL || hazardAhead > 2) return 0;
-    if (formato == "B" || formato == "J") return 2;
+    if(formato == "B" || formato == "J") return 2;
     if((atual->inst.rs1 == rd || atual->inst.rs2 == rd) && (rd != "" && rd != "zero")) return hazardAhead;
 
     return detectHazardAhead(atual->proximo, rd, ++hazardAhead);
@@ -65,15 +65,39 @@ void fullNopInsertion(ListaInstrucoes* lista) {
 }
 
 
-No* acharCandidato(No* atual, string rd){
+bool verificarIndependencia(No* comparador, string rd, string rs1, string rs2){
 
-    if(atual == NULL) return NULL;
+    if(comparador == NULL || comparador->inst.mnemonico == "nop") return true;
 
-    if(atual->nivelHazard <= 0 && detectHazardAhead(atual, rd) <= 0 && atual->anterior->nivelHazard <= 0 && atual->anterior->anterior->nivelHazard <= 0) 
-        return atual;
 
-    return acharCandidato(atual->proximo, rd);
+    if(
+       comparador->inst.rs1 != rd || comparador->inst.rs2 != rd ||
+       comparador->inst.rd != rs1 || comparador->inst.rd != rs2) return false;
+
+    return true;
 }   
+
+
+bool instIndependente(No* comparador, string rd, string rs1, string rs2, int range) {
+    if (comparador == NULL || range < 0) return true;
+
+    return verificarIndependencia(comparador, rd, rs1, rs2) &&
+    instIndependente(comparador->anterior, rd, rs1, rs2, --range);
+}
+
+No* acharCandidato(No* atual){
+
+    int range = 0;
+
+    while (atual)
+    {
+        if (instIndependente(atual->anterior, atual->inst.rd, atual->inst.rs1, atual->inst.rs2, range++)) return atual;
+        atual = atual->proximo;
+    }
+
+    return NULL;
+    
+}
 
 void reordenar(ListaInstrucoes* lista, No* atual, No* candidato){
     
@@ -87,10 +111,9 @@ void iniciaReordenacao(ListaInstrucoes* lista) {
 
     while(atual != NULL){
         if(atual->nivelHazard > 0){
-            No* comecoBusca = atual;
-            for(int i=3-atual->nivelHazard; i<3&&i>0; i--) comecoBusca = comecoBusca->proximo;
-            No* candidato = acharCandidato(comecoBusca, atual->inst.rd);
-            if(candidato != NULL){
+            No* comecoBusca = atual->proximo;
+            No* candidato = acharCandidato(comecoBusca);
+            if(candidato){
                 reordenar(lista, atual, candidato);
             }
         }
