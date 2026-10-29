@@ -89,28 +89,46 @@ bool instIndependente(No* comparador, No* atual, int range) {
 } */
 
 bool verificarIndependencia(No* atual, No* candidato) {
-    if(((candidato->inst.rd == atual->inst.rs1) || (candidato->inst.rd == atual->inst.rs2) && candidato->inst.rd != "S")
-    && (candidato->inst.rs1 == atual->inst.rd ) || (candidato->inst.rs2 == atual->inst.rd))
-    {
-            cout << "(" << candidato->inst.assembly << " -> candidato" << endl;
-            return false;
+
+    bool independente = true;
+
+    string candMnemonico = candidato->inst.mnemonico;
+
+    if (candMnemonico == "lw" || candMnemonico == "lh" || candMnemonico == "lb" || candMnemonico == "lhu" || candMnemonico == "lbu") {
+        if (candidato->inst.rs1 == atual->inst.rd || candidato->inst.rd == atual->inst.rs1 || candidato->inst.rd == atual->inst.rs2)
+            independente = false;
     }
 
-    return true;
+    else if (candidato->inst.formato == "S") {
+        if (candidato->inst.rs1 == atual->inst.rd || candidato->inst.rd == atual->inst.rd)
+            independente = false;
+    }
+
+    else if((candidato->inst.rd == atual->inst.rs1) || (candidato->inst.rd == atual->inst.rs2) ||
+            (candidato->inst.rs1 == atual->inst.rd ) || (candidato->inst.rs2 == atual->inst.rd)) independente = false;
+
+        
+    return independente;
 }
 
 bool instIndependente(No* atual, No* candidato, int range) {
-    while (candidato != atual)
-    {   
-        if(candidato->inst.rd == "zero") {
-            candidato = candidato->anterior;
-            continue;
-        } 
 
-        candidato = candidato->anterior;
+    if (!verificarIndependencia(atual, candidato)) return false;
+
+    No* comparar = candidato->anterior;
+    while (comparar != atual)
+    {   
+        if(comparar->inst.rd == "zero") {
+            comparar = comparar->anterior;
+            continue;
+        }
+
+        if (!verificarIndependencia(candidato, comparar)) return false;
+
+        comparar = comparar->anterior;
     }
 
-    return verificarIndependencia(atual, candidato);
+    return true;
 }
 
 No* acharCandidato(No* atual){
@@ -119,9 +137,8 @@ No* acharCandidato(No* atual){
     No* candidato = atual->proximo;
     while (candidato)
     {
-        if (instIndependente(atual, candidato, range++)) {
-            return candidato;
-        } 
+        if (instIndependente(atual, candidato, range++)) return candidato;
+        
         candidato = candidato->proximo;
     }
 
@@ -143,10 +160,8 @@ void iniciaReordenacao(ListaInstrucoes* lista) {
         if(atual->nivelHazard > 0){
             No* comecoBusca = atual;
             No* candidato   = acharCandidato(comecoBusca);
-            if(candidato){
-                cout << atual->inst.assembly << " -> ATUAL" << endl << ")" << endl;
-                reordenar(lista, atual, candidato);
-            }
+
+            if(candidato) reordenar(lista, atual, candidato);
         }
         atual = atual->proximo;
     }
