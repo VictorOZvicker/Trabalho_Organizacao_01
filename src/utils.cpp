@@ -186,6 +186,8 @@ bool gerarOutputReordenacao (string text) {
 }
 
 bool menu(string inputPath) {
+    string nop;
+    string reordenacao;
 
     cout << "\tMenu" << endl;
     cout << "1.Etapa M1" << endl;
@@ -199,8 +201,9 @@ bool menu(string inputPath) {
     case '1':
         return gerarOutput(outputString(extrairInstInfos(inputPath)));
     case '2':
-        gerarOutputNop(resolucaoNop(extrairInstInfos(inputPath)));
-        gerarOutputReordenacao(resolucaoReordenacao(extrairInstInfos(inputPath)));
+        gerarSaida(extrairInstInfos(inputPath), nop, reordenacao);
+        gerarOutputNop(nop);
+        gerarOutputReordenacao(reordenacao);
         return true;
     case '0':
         cout << "Saindo...";

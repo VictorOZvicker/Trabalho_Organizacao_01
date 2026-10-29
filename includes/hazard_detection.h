@@ -3,7 +3,6 @@
 
 #include "global.h"
 
-std::string resolucaoNop(const std::vector<Instruction> &program);
-std::string resolucaoReordenacao(const std::vector<Instruction>& program);
+void gerarSaida(const std::vector<Instruction>& program, std::string &outputNop, std::string &outputReordenacao);
 
 #endif

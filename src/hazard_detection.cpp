@@ -7,19 +7,24 @@ void fullNopInsertion(ListaInstrucoes* lista);
 void iniciaReordenacao(ListaInstrucoes* lista);
 void recalculoEnderecoSalto(ListaInstrucoes* lista);
 
-string resolucaoNop(const std::vector<Instruction> &program) {
+void gerarRelatorioDeCusto(float original, float solucaoNop, float solucaoReordenacao);
+
+string resolucaoNop(const std::vector<Instruction> &program, int &numInstrucoes) {
     ListaInstrucoes* lista = criarLista(program);
 
     hazardDetection(lista->inicio);
+
     fullNopInsertion(lista);
     recalculoEnderecoSalto(lista);
+
+    numInstrucoes = lista->tamanho;
 
     string output = imprimirLista(lista);
     destruirLista(lista);
     return output;
 }
 
-string resolucaoReordenacao(const std::vector<Instruction>& program) {
+string resolucaoReordenacao(const std::vector<Instruction>& program, int &numInstrucoes) {
     ListaInstrucoes* lista = criarLista(program);
 
     hazardDetection(lista->inicio);
@@ -27,11 +32,41 @@ string resolucaoReordenacao(const std::vector<Instruction>& program) {
     iniciaReordenacao(lista);
     recalculoEnderecoSalto(lista);
 
+    numInstrucoes = lista->tamanho;
+
     string output = imprimirLista(lista);
     destruirLista(lista);
     
     return output;
 }
+
+void gerarSaida(const std::vector<Instruction>& program, std::string &outputNop, std::string &outputReordenacao) {
+    int numeroInstNop, numeroInstReordenacao;
+    int original = program.size();
+
+    outputNop = resolucaoNop(program, numeroInstNop);
+    outputReordenacao = resolucaoReordenacao(program, numeroInstReordenacao);
+
+    cout << original << " " << numeroInstNop << " " << numeroInstReordenacao << endl; 
+
+    gerarRelatorioDeCusto(original, numeroInstNop, numeroInstReordenacao);
+}
+
+
+void gerarRelatorioDeCusto(float original, float solucaoNop, float solucaoReordenacao) {
+
+    int difNopOriginal = solucaoNop - original;
+    int difReordenacaoOriginal = solucaoReordenacao - original;
+
+    float desempenhoNopOriginal = ((solucaoNop/original) - 1) * 100;
+    float desempenhoReordenacaoNop = ((solucaoReordenacao/original) - 1) * 100;
+
+    cout << "CUSTO" << endl;
+    cout << "Original .............. " << original << " Instrucoes." << endl;
+    cout << "Somente nops .......... " << solucaoNop << " Instrucoes." << "(" << "+" << difNopOriginal << ", +" << desempenhoNopOriginal << "%)" << endl;
+    cout << "nops + reordenacao .... " << solucaoReordenacao << " Instrucoes." << "(" << "+" << difReordenacaoOriginal << ", +" << desempenhoReordenacaoNop << "%)" << endl;
+}
+
 
 int detectHazardAhead(No* atual, string rd = "", int hazardAhead = 1, string formato = "") {
     if(atual == NULL || hazardAhead > 2) return 0;
@@ -65,35 +100,71 @@ void fullNopInsertion(ListaInstrucoes* lista) {
 }
 
 
-/* bool verificarIndependencia(No* comparador, No* atual){
+bool verificaIndependenciaDeBranches(No* atual, No* candidato) {
+    if (atual == NULL || candidato == NULL) return false;  
 
-    if(comparador == NULL || comparador->inst.mnemonico == "nop") return false;
+    // ESSE AQUI PEGA O INICIO DA LISTA, PODERIA SER PASSADO O LISTA->INICIO TBM, MAS DAI TEM QUE PASSAR PELOS PARAMETROS TUDO.
+    No* inicio = atual;
+    while (inicio->anterior != NULL) inicio = inicio->anterior;
 
-    if(atual->inst.mnemonico == "lw" && comparador->inst.formato == "S") return true;
+    // ESSES AQUI COMEÇAM EM -1 PQ O ENDEREÇO MINIMO É O 0...
+    int indiceAtual = -1;
+    int indiceCandidato = -1;
+    int indice = 0;
 
-    if((comparador->inst.rs1 == atual->inst.rd && atual->inst.rd != "") || (comparador->inst.rs2 == atual->inst.rd && atual->inst.rd != "" ) || (comparador->inst.rd == atual->inst.rs1 && atual->inst.rs1 != "") || (comparador->inst.rd == atual->inst.rs2 && atual->inst.rs2 != ""))
-    {
-        cout << comparador->inst.assembly << " -> comparador" << endl;
-        return false;
-    } 
+    // DAI NO CASO A GENTE TEM QUE VER SE ELE PODE PEGAR INSTRUÇÕES DE ANTES DO PROGRAMA
+
+    No* noIterador = inicio;
+
+    // ESSE AQUI É PRA ACHAR O INDICE DOS NOS, JÁ QUE A GENTE COLOCA OS ENDEREÇOS DPS
+    while(noIterador){
+        if(noIterador == atual) indiceAtual = indice;
+        if(noIterador == candidato) indiceCandidato = indice;
+        indice++;
+
+        noIterador = noIterador->proximo;
+    }
+
+    // NÃO ACHOU O COMEÇO DA BUSCA OU O CANDIDATO TA ANTES
+    //if (indiceAtual < 0 || indiceCandidato <= indiceAtual) return false;
+
+    indice = 0;
+    No* no = inicio;
+    while(no != NULL) { // TEM QUE COMPLEMENTAR ESSE LOOP CERTINHO
+    // NÃO PODE ESQUECER DE IR INCREMENTANDO O INDICE
+        if (no->inst.formato == "B" || no->inst.formato == "J") {
+            int destino = stoi(no->inst.imm)/4 + indice; // TEM QUE PEGAR O IMEDIATO
+
+             if (destino < indice) {
+                if (indiceCandidato >= destino && indiceCandidato < indice)
+                    return false;
+            } else if (destino > indice) {
+                if (indiceCandidato > indice && indiceCandidato < destino)
+                    return false;
+            }
+
+        }
+        if (indice >= indiceAtual && indice < indiceCandidato &&
+            (no->inst.formato == "B" || no->inst.formato == "J" ||
+             no->inst.mnemonico == "jalr")) {
+            return false;
+        }
+        no = no->proximo;
+        indice++;
+    }
 
     return true;
-}   
+}
 
-
-bool instIndependente(No* comparador, No* atual, int range) {
-    if (comparador == NULL || range < 0) return true;
-
-    return verificarIndependencia(comparador, atual) &&
-    instIndependente(comparador->anterior, atual, --range);
-} */
 
 bool verificarIndependencia(No* atual, No* candidato) {
 
     bool independente = true;
-
     string candMnemonico = candidato->inst.mnemonico;
 
+    if (verificaIndependenciaDeBranches(atual, candidato))
+    {
+    
     if (candMnemonico == "lw" || candMnemonico == "lh" || candMnemonico == "lb" || candMnemonico == "lhu" || candMnemonico == "lbu") {
         if (candidato->inst.rs1 == atual->inst.rd || candidato->inst.rd == atual->inst.rs1 || candidato->inst.rd == atual->inst.rs2)
             independente = false;
@@ -106,12 +177,12 @@ bool verificarIndependencia(No* atual, No* candidato) {
 
     else if((candidato->inst.rd == atual->inst.rs1) || (candidato->inst.rd == atual->inst.rs2) ||
             (candidato->inst.rs1 == atual->inst.rd ) || (candidato->inst.rs2 == atual->inst.rd)) independente = false;
-
-        
+            
+    }    
     return independente;
 }
 
-bool instIndependente(No* atual, No* candidato, int range) {
+bool instIndependente(No* atual, No* candidato) {
 
     if (!verificarIndependencia(atual, candidato)) return false;
 
@@ -137,7 +208,7 @@ No* acharCandidato(No* atual){
     No* candidato = atual->proximo;
     while (candidato)
     {
-        if (instIndependente(atual, candidato, range++)) return candidato;
+        if (instIndependente(atual, candidato)) return candidato;
         
         candidato = candidato->proximo;
     }
