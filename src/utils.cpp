@@ -159,12 +159,37 @@ bool gerarOutput(string text){
     return true;
 }
 
+bool gerarOutputNop (string text) {
+    ofstream output("solucao_nop.txt");
+    if(!output) {
+        cerr << "Erro ao escrever o output para Nop." << endl;
+        return false;
+    }
+    output << text;
+
+    output.close();
+
+    return true;
+}
+
+bool gerarOutputReordenacao (string text) {
+    ofstream output("solucao_reordenacao.txt");
+    if(!output) {
+        cerr << "Erro ao escrever o output para reordenacao." << endl;
+        return false;
+    }
+    output << text;
+
+    output.close();
+
+    return true;
+}
+
 bool menu(string inputPath) {
 
     cout << "\tMenu" << endl;
-    cout << "1.gerar output padrão" << endl;
-    cout << "2.gerar output com NOPs" << endl;
-    cout << "3.gerar output com Reordenacao" << endl;
+    cout << "1.Etapa M1" << endl;
+    cout << "2.Etapa M2" << endl;
     cout << "0.sair" << endl;
     char opc;
     cout << "Escolha uma opcao: ";
@@ -174,11 +199,14 @@ bool menu(string inputPath) {
     case '1':
         return gerarOutput(outputString(extrairInstInfos(inputPath)));
     case '2':
-        return gerarOutput(resolucaoNop(extrairInstInfos(inputPath)));
-    case '3':
-        return gerarOutput(resolucaoReordenacao(extrairInstInfos(inputPath)));
+        gerarOutputNop(resolucaoNop(extrairInstInfos(inputPath)));
+        gerarOutputReordenacao(resolucaoReordenacao(extrairInstInfos(inputPath)));
+        return true;
+    case '0':
+        cout << "Saindo...";
+        break;
     default:
-        cout << "Opcao inválida. Escholha outra";
+        cout << "Opcao inválida.";
         break;
     }
     return false;

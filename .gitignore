@@ -1,3 +1,5 @@
 .vscode/
 *.exe
 output.txt
+solucao_nop.txt
+solucao_reordenacao.txt
