@@ -117,7 +117,7 @@ std::string imprimirLista(ListaInstrucoes* lista) {
     while (noAtual != NULL) 
     {   
 
-        output += noAtual->inst.assembly + "  nivel hazard: " + std::to_string(noAtual->nivelHazard) + "salto: " + noAtual->inst.imm + "\n";
+        output += noAtual->inst.assembly + "\n";
 
         noAtual = noAtual->proximo;
     }

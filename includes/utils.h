@@ -16,7 +16,7 @@ std::string conversorHexBin(std::string hex);
 int hexToInt(std::string hex);
 
 
-bool menu(std::string inputPath);
+bool menu();
 
 
 

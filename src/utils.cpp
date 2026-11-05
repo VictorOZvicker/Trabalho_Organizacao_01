@@ -185,17 +185,26 @@ bool gerarOutputReordenacao (string text) {
     return true;
 }
 
-bool menu(string inputPath) {
+bool menu() {
+    string inputPath;
     string nop;
     string reordenacao;
 
-    cout << "\tMenu" << endl;
-    cout << "1.Etapa M1" << endl;
-    cout << "2.Etapa M2" << endl;
-    cout << "0.sair" << endl;
+    cout << "\t+-----------------+" << endl;
+    cout << "\t|       Menu      |" << endl;
+    cout << "\t|    1.Etapa M1   |" << endl;
+    cout << "\t|    2.Etapa M2   |" << endl;
+    cout << "\t|    0.sair       |" << endl;
+    cout << "\t+-----------------+" << endl;
     char opc;
     cout << "Escolha uma opcao: ";
     cin >> opc;
+
+    if (opc != '0') {
+        cout << "Digite o nome do arquivo (com extensao)." << endl;
+        cin >> inputPath;
+    }
+    system("cls");
     switch (opc)
     {
     case '1':
@@ -210,7 +219,7 @@ bool menu(string inputPath) {
         break;
     default:
         cout << "Opcao inválida.";
-        break;
+        return true;
     }
     return false;
 }

@@ -47,8 +47,6 @@ void gerarSaida(const std::vector<Instruction>& program, std::string &outputNop,
     outputNop = resolucaoNop(program, numeroInstNop);
     outputReordenacao = resolucaoReordenacao(program, numeroInstReordenacao);
 
-    cout << original << " " << numeroInstNop << " " << numeroInstReordenacao << endl; 
-
     gerarRelatorioDeCusto(original, numeroInstNop, numeroInstReordenacao);
 }
 
@@ -204,7 +202,6 @@ bool instIndependente(No* atual, No* candidato) {
 
 No* acharCandidato(No* atual){
 
-    int range = 0;
     No* candidato = atual->proximo;
     while (candidato)
     {
