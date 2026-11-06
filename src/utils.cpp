@@ -1,9 +1,8 @@
-#include <iostream>
-#include <format>
 #include <fstream>
 #include "utils.h"
 #include "ler_arquivo.h"
 #include "decodificador.h"
+#include "hazard_detection.h"
 
 using namespace std;
 
@@ -85,60 +84,142 @@ int hexToInt(string hex){
     return stoi(hex, nullptr, 16);
 }
 
-bool gerarOutput(string inputPath){
-    
-    vector<vector<string>> matrizLinhas = linhasLidas(inputPath);
+vector<Instruction> extrairInstInfos(string path){
 
-    if(matrizLinhas.empty()){ 
+    vector<string> instLidas = linhasLidas(path);
+
+    if(instLidas.empty()){ 
         cerr << "Arquivo não encontrado" << endl;
-        return false;
+        return {};
     }
+    vector<Instruction> instInfos;
+
+    for(int i=0; i < instLidas.size(); i++)
+    {
+        instInfos.push_back(decodificaTipo(instLidas[i]));
+
+        // DEPOIS TEM QUE AJUSTAR O CAMINHO ABSOLUTO DOS JUMPS/BRANCHS
+    }
+
+    return instInfos;
+}
+
+string outputString(vector<Instruction> insts){
+
+    float* contagem = (float*)calloc(6, sizeof(float));
+    float cpi[6] = { 4.0, 3.0, 1.0, 5.0, 2.0, 3.0 };
+
+    string output;
+    for (int i = 0; i <  insts.size(); i++) {
+
+        output += "tipo mnemonico rd rs1 rs2 imm funct3 funct7\n";
+        output += insts[i].formato   + " ";
+        output += insts[i].mnemonico + " ";
+        output += insts[i].rd        + " ";
+        output += insts[i].rs1       + " ";
+        output += insts[i].rs2       + " ";
+        output += insts[i].imm       + " ";
+        output += insts[i].funct3    + " ";
+        output += insts[i].funct7    + " ";
+        output += insts[i].assembly  + "\n";
+
+        output += "PC = ";
+
+        output += to_string(i*4) += " ";
+
+        output += insts[i].bin += "\n";
+
+        contarTipoInst(insts[i].formato, contagem);
+
+        output += "\n";
+    }
+
+    int totalInstrucoes = insts.size();
+
+    vector<string> estatisticas = geradorEstatistica(contagem, cpi, totalInstrucoes);
+    output += "\n";
+    for(int i=0; i < estatisticas.size(); i++){
+        output += estatisticas[i];
+    }
+    return output;
+}
+
+
+bool gerarOutput(string text){
 
     ofstream output("output.txt");
     if(!output) {
         cerr << "Erro ao escrever o output." << endl;
         return false;
     }
-
-    float* contagem = (float*)calloc(6, sizeof(float));
-    float cpi[6] = { 4.0, 3.0, 1.0, 5.0, 2.0, 3.0 };
-
-    for (int i = 0; i <  matrizLinhas.size(); i++) {
-        vector<string> instInfos = decodificaTipo(matrizLinhas[i][1]);
-        
-        if(instInfos[1] == "B"  || instInfos[1] == "J") {
-            int pos = instInfos[9].find_last_of(',');
-            instInfos[9].erase(pos);
-            instInfos[9] += format(", {:#x}", hexToInt(matrizLinhas[i][0]) + stoi(instInfos[6]));
-        }
-        
-        output << "tipo mnemonico rd rs1 rs2 imm funct3 funct7" << endl;
-        for(int i=1; i <= 9; i++) {
-            output << instInfos[i] << " ";
-        }
-
-        output << endl;
-
-        output << "PC = ";
-
-        output << matrizLinhas[i][0] << " ";
-
-        output << matrizLinhas[i][1] << endl;
-
-        contarTipoInst(instInfos[1], contagem);
-
-        output << endl;
-    }
-
-    int totalInstrucoes = matrizLinhas.size();
-
-    vector<string> estatisticas = geradorEstatistica(contagem, cpi, totalInstrucoes);
-    output << endl;
-    for(int i=0; i < estatisticas.size(); i++){
-        output << estatisticas[i];
-    }
+    output << text;
 
     output.close();
 
     return true;
+}
+
+bool gerarOutputNop (string text) {
+    ofstream output("solucao_nop.txt");
+    if(!output) {
+        cerr << "Erro ao escrever o output para Nop." << endl;
+        return false;
+    }
+    output << text;
+
+    output.close();
+
+    return true;
+}
+
+bool gerarOutputReordenacao (string text) {
+    ofstream output("solucao_reordenacao.txt");
+    if(!output) {
+        cerr << "Erro ao escrever o output para reordenacao." << endl;
+        return false;
+    }
+    output << text;
+
+    output.close();
+
+    return true;
+}
+
+bool menu() {
+    string inputPath;
+    string nop;
+    string reordenacao;
+
+    cout << "\t+-----------------+" << endl;
+    cout << "\t|       Menu      |" << endl;
+    cout << "\t|    1.Etapa M1   |" << endl;
+    cout << "\t|    2.Etapa M2   |" << endl;
+    cout << "\t|    0.sair       |" << endl;
+    cout << "\t+-----------------+" << endl;
+    char opc;
+    cout << "Escolha uma opcao: ";
+    cin >> opc;
+
+    if (opc != '0') {
+        cout << "Digite o nome do arquivo (com extensao)." << endl;
+        cin >> inputPath;
+    }
+    system("cls");
+    switch (opc)
+    {
+    case '1':
+        return gerarOutput(outputString(extrairInstInfos(inputPath)));
+    case '2':
+        gerarSaida(extrairInstInfos(inputPath), nop, reordenacao);
+        gerarOutputNop(nop);
+        gerarOutputReordenacao(reordenacao);
+        return true;
+    case '0':
+        cout << "Saindo...";
+        break;
+    default:
+        cout << "Opcao inválida.";
+        return true;
+    }
+    return false;
 }

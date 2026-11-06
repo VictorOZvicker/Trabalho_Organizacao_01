@@ -32,3 +32,16 @@ Programa capaz de **ler instruções em Assembly RISC-V** e, a partir delas:
                             ▼
 Rodar o programa e especificar o nome do arquivo (com extensão).
 ```
+
+
+# O que fazer
+---
+```
+       Tem que alterar o gerador de output pra gerar um vector so com as inst infos pra gente poder pegar as informações de RD pra usar dentro do hazard detector
+
+       Depois, pra fazer o hazard detector é só usar o vector de inst infos pra poder verificar se o RD da primeira instrução será usado como registrador pras próximas instruções!
+
+       Depois a gente pensa em como fazer a inserção de NOPS
+
+```
+---
